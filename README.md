@@ -12,11 +12,19 @@ The ouput right now is an csv file delimited by pipes ("|") but the goal is to r
 
 
 ## The current supported banks are:
-  - Banco BHD León (Dominican Republic) `(in progress)`
+  - Banco BHD León (Dominican Republic)
   - Banco Vimenca (Dominican Republic) `(in progress)`
 
 ## The current supported email services are:
   - Gmail: Using the Google api with readonly permission
 
-## Known issues:
+
+## Known TODO's:
+  1. When running the main file, one parameter should be the user email to determine which mail service to use
+  1. Rigth now it's only expecting multipart emails (threads) not single messages
+  1. How to hanlde email credentials?
+  1. How to handle email authentication token?
+  1. Add Outlook Email service 
+
+## Known Issues:
   - Gmail autentication redirections says its unsafe
