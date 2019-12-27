@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup, Tag
 from datetime import date, datetime, timedelta
 
+
 class BaseReader():
     """
     transcation: {
@@ -12,20 +13,12 @@ class BaseReader():
         type        --> Compra | Crédito | Débito | Consumo
     }
     """
-    
-    def __init__(self, bank_email: str, days_to_read: int):
-        self._date_to = date.today()
-        self._date_from = self._date_to - timedelta(days_to_read)
-        
-        self._query += f'before: {self._date_to:%Y/%m/%d} after: {self._date_from:%Y/%m/%d}'
-        self._query += f' from:{bank_email}'
+
+    def __init__(self, email: str):
+        self.email = email
 
     def feed(self, raw_html: str):
         self.html = BeautifulSoup(raw_html, 'html.parser')
-
-    @property
-    def query(self):
-        return self._query
 
     @property
     def date(self):
@@ -51,7 +44,8 @@ class BaseReader():
     def type(self):
         raise NotImplementedError
 
-    def get_element_by_class(self, element_tag: str, attr: str, attr_value: str) -> Tag:
+    def get_element_by_class(self, element_tag: str,
+                             attr: str, attr_value: str) -> Tag:
         return self.html.find(element_tag, {attr: attr_value})
 
     def get_elements_by_tag(self, tag: str) -> list:
