@@ -2,11 +2,9 @@ from .base_reader import BaseReader
 
 
 class BHDLeonHtmlReader(BaseReader):
-    def __init__(self, days_to_read):
-        self._query = ''
-        return super().__init__('alertas@bhdleon.com.do', days_to_read)
+    def __init__(self):
+        return super().__init__('alertas@bhdleon.com.do')
 
-    
     @property
     def date(self):
         return self.get_element_by_class('td', 'class', 't_fecha').text
@@ -21,8 +19,8 @@ class BHDLeonHtmlReader(BaseReader):
 
     @property
     def merchant(self):
-        merchant_name = self.get_element_by_class('td', 'class', 't_comercio').text
-        merchant_name = merchant_name if merchant_name else 'None'
+        merchant_name = self.get_element_by_class('td', 'class', 't_comercio')
+        merchant_name = merchant_name.text if merchant_name else 'None'
         return merchant_name
 
     @property
