@@ -1,34 +1,19 @@
-from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import Flow
-from httplib2 import Http
-from oauth2client import file, client, tools
+from mail_services.gmail_service import GmailService
+from banks_mail_readers.bhdleon_reader import BHDLeonHtmlReader
 
-SCOPES = 'https://www.googleapis.com/auth/gmail.readonly'
-
-
-# def main():
-#     flow = Flow.from_client_secrets_file(
-#         'token.json', 
-#         scopes=['profile', 'email'],
-#         redirect_uri='urn:ietf:wg:oauth:2.0:oob')
 
 def main():
-    #     flow = Flow.from_client_secrets_file(
-    #         'token.json', 
-    #         scopes=['profile', 'email'],
-    #         redirect_uri='urn:ietf:wg:oauth:2.0:oob')
-    store = file.Storage('token.json')
-    creds = store.get()
-    if not creds or creds.invalid:
-        flow = Flow.from_client_secrets_file(
-        'token.json',
-        scopes=SCOPES,
-        redirect_uri='urn:ietf:wg:oauth:2.0:oob')
-        creds = tools.run_flow(flow, store)
-    service = build('gmail', 'v3', http=creds.authorize(Http()))
+
+    # TODO; Un argumento debe ser el correo, y en base a este
+    # determinar que servicio de correo usar
+
+    bank = BHDLeonHtmlReader()
+
+    gmail = GmailService(100)
+    gmail.authenticate()
+    gmail.build_service()
+    gmail.read_mail(bank)
 
 
 if __name__ == '__main__':
     main()
-
-print('wei')
