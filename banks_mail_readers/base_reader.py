@@ -1,8 +1,9 @@
 from bs4 import BeautifulSoup, Tag
 from datetime import date, datetime, timedelta
+from abc import ABC, abstractproperty
 
 
-class BaseReader():
+class BaseReader(ABC):
     """
     transcation: {
         date        --> 21/12/19 23:40
@@ -20,29 +21,29 @@ class BaseReader():
     def feed(self, raw_html: str):
         self.html = BeautifulSoup(raw_html, 'html.parser')
 
-    @property
+    @abstractproperty
     def date(self):
-        raise NotImplementedError
+        pass
 
-    @property
+    @abstractproperty
     def currency(self):
-        raise NotImplementedError
+        pass
 
-    @property
+    @abstractproperty
     def amount(self):
-        raise NotImplementedError
+        pass
 
-    @property
+    @abstractproperty
     def merchant(self):
-        raise NotImplementedError
+        pass
 
-    @property
+    @abstractproperty
     def status(self):
-        raise NotImplementedError
+        pass
 
-    @property
+    @abstractproperty
     def type(self):
-        raise NotImplementedError
+        pass
 
     def get_element_by_class(self, element_tag: str,
                              attr: str, attr_value: str) -> Tag:
