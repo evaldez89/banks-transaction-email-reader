@@ -4,17 +4,6 @@ from abc import ABC, abstractproperty
 
 
 class BaseReader(ABC):
-    """
-    transcation: {
-        date        --> 21/12/19 23:40
-        currency    --> RD
-        amount      --> 100.00
-        merchant    --> UBR* PENDING.UBER...
-        status      --> Aprovada | Reverzada | Declinada | Rechazada
-        type        --> Compra | Crédito | Débito | Consumo
-    }
-    """
-
     def __init__(self, email: str):
         self.email = email
 
