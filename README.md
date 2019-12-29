@@ -47,6 +47,7 @@ The ouput right now is an csv file delimited by pipes ("|") but the goal is to r
     }
   }
   ```
+  - Install requirements: `python -m pip install -r requirements.txt`
   - After having that, all you need is run:
     - `python main.py bhdleon example@gmail.com`
 
@@ -61,13 +62,13 @@ The ouput right now is an csv file delimited by pipes ("|") but the goal is to r
         ```python
         class VimencaHtmlReader(BaseReader):
             def __init__(self):
-            return super().__init__('internetbanking@vimenca.com')
+            return super().__init__('ebanking@bank.com')
 
         ```
-      - Override the property methods with the logic of how to read the html email of the desired bank. The BaseReader class already has methods like: `get_element_by_class` and `get_elements_by_tag`.
+      - Override the properties methods with the logic of how to read the html email of the desired bank. The BaseReader class already has methods like: `get_element_by_class` and `get_elements_by_tag`.
         > Example:
         ```python
-        # ... There might be other property method before and after
+        # ... There are others properties method before and after
         @property
         def currency(self):
             return self.get_element_by_class('td', 'class', 't_moneda').text
