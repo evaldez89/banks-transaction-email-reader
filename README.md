@@ -10,10 +10,81 @@ The ouput right now is an csv file delimited by pipes ("|") but the goal is to r
     21/12/19 23:40|RD|91.12|UBR* PENDING.UBER.COM|Aprobada|Compra
     21/12/19 20:32|RD|125.53|UBR* PENDING.UBER.COM|Aprobada|Compra
 
+## Legend
 
-## The current supported banks are:
-  - Banco BHD León (Dominican Republic)
-  - Banco Vimenca (Dominican Republic) `(in progress)`
+:construction: work in progress
+
+:white_check_mark: when adding tests
+
+:alarm_clock: Pending
+
+### Bancos del Estado
+
+- [ ] BanReservas :alarm_clock:
+
+### Bancos Comerciales
+- [ ] Banco Vimenca (Dominican Republic) `(in progress)`
+- [ ] Banco Popular Dominicano :alarm_clock:
+- [ ] Banco BHD León :alarm_clock:
+- [ ] Banco del Progreso :alarm_clock:
+- [ ] Banco Santa Cruz :alarm_clock:
+- [ ] Banco Caribe :alarm_clock:
+- [ ] Banco BDI :alarm_clock:
+- [ ] Banco López de Haro :alarm_clock:
+- [ ] Banco Ademi :alarm_clock:
+- [ ] Banco BELLBANK :alarm_clock:
+- [ ] Banco Múltiple Activo Dominicana :alarm_clock:
+
+### Bancos Extranjeros
+
+- [ ] Scotiabank :alarm_clock:
+- [ ] Citibank :alarm_clock:
+- [ ] Banco Promerica :alarm_clock:
+- [ ] Banesco :alarm_clock:
+- [ ] Bancamerica :alarm_clock:
+  
+### Bancos de Ahorro y Crédito
+
+- [ ] Banco Atlántico :alarm_clock:
+- [ ] Banco Bancotui :alarm_clock:
+- [ ] Banco BDA :alarm_clock:
+- [ ] Banco Adopem :alarm_clock:
+- [ ] Banco Agrícola De La República Dominicana :alarm_clock:
+- [ ] Banco Pyme Bhd :alarm_clock:
+- [ ] Banco Capital :alarm_clock:
+- [ ] Banco Confisa :alarm_clock:
+- [ ] Banco Empire :alarm_clock:
+- [ ] Banco Motor Crédito :alarm_clock:
+- [ ] Banco Rio :alarm_clock:
+- [ ] Banco Providencial :alarm_clock:
+- [ ] Banco Del Caribe :alarm_clock:
+- [ ] Banco Inmobiliario (Banaci) :alarm_clock:
+- [ ] Banco Gruficorp :alarm_clock:
+- [ ] Banco Cofaci :alarm_clock:
+- [ ] Banco Atlas :alarm_clock:
+- [ ] Banco Bonanza :alarm_clock:
+- [ ] Banco Fihogar :alarm_clock:
+- [ ] Banco Federal :alarm_clock:
+- [ ] Banco Micro :alarm_clock:
+- [ ] Banco Union :alarm_clock:
+
+### Asociaciones de Ahorro y Préstamo
+
+- [ ] Asociación Popular :alarm_clock:
+- [ ] Asociación Popular de Ahorros y Préstamos :alarm_clock:
+- [ ] Asociación Cibao :alarm_clock:
+- [ ] Asociación Nortena :alarm_clock:
+- [ ] Asociación Peravia :alarm_clock:
+- [ ] Asociación Romana :alarm_clock:
+- [ ] Asociación Higuamo :alarm_clock:
+- [ ] Asociación La Vega Real :alarm_clock:
+- [ ] Asociación Duarte :alarm_clock:
+- [ ] Asociación Barahona :alarm_clock:
+- [ ] Asociación Maguana :alarm_clock:
+- [ ] Asociación Mocana :alarm_clock:
+- [ ] Asociación Bonao :alarm_clock:
+- [ ] Asociación La Nacional :alarm_clock:
+- [ ] Asociación Noroestana :alarm_clock:
 
 ## The current supported email services are:
   - Gmail: Using the Google api with readonly permission
