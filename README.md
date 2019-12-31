@@ -1,20 +1,21 @@
 # Bank Transaction Email Reader
-The intention is of this project is to read emails comming from a bank regarding information of a transaction.
 
-The ouput right now is an csv file delimited by pipes ("|") but the goal is to return a json with all the information so you can be able to use this on your mobile, desktop or web applications.
+The intention of this project is to read emails coming from a bank regarding information of a transaction.
 
-> Output Example:
+The output right now is an csv file delimited by pipes ("|") but the goal is to return a json with all the information so you can be able to use this on your mobile, desktop or web applications.
+
+Output Example:
 
     date|currency|amount|merchant|status|type|
     21/12/19 23:40|RD|91.12|None|Reversada|Compra
     21/12/19 23:40|RD|91.12|UBR* PENDING.UBER.COM|Aprobada|Compra
     21/12/19 20:32|RD|125.53|UBR* PENDING.UBER.COM|Aprobada|Compra
 
-## Legend
+## Task Legend
 
 :construction: work in progress
 
-:white_check_mark: when adding tests
+:white_check_mark: when task is done
 
 :alarm_clock: Pending
 
@@ -23,7 +24,7 @@ The ouput right now is an csv file delimited by pipes ("|") but the goal is to r
 - [ ] BanReservas :alarm_clock:
 
 ### Bancos Comerciales
-- [ ] Banco Vimenca (Dominican Republic) `(in progress)`
+- [ ] Banco Vimenca (Dominican Republic) :alarm_clock:
 - [ ] Banco Popular Dominicano :alarm_clock:
 - [ ] Banco BHD León :alarm_clock:
 - [ ] Banco del Progreso :alarm_clock:
@@ -86,21 +87,26 @@ The ouput right now is an csv file delimited by pipes ("|") but the goal is to r
 - [ ] Asociación La Nacional :alarm_clock:
 - [ ] Asociación Noroestana :alarm_clock:
 
-## The current supported email services are:
+## The current supported email services are
+
   - Gmail: Using the Google api with readonly permission
 
+## Known Major Tasks TODO
 
-## Known TODO's:
   1. When running the main file, one parameter should be the user email to determine which mail service to use
-  1. Rigth now it's only expecting multipart emails (threads) not single messages
-  1. How to hanlde email credentials?
-  1. How to handle email authentication token?
-  1. Add Outlook Email service
+  2. Right now it's only expecting multipart emails (threads) not single messages
+  3. How to handle email credentials?
+  4. How to handle email authentication token?
+  5. Add Outlook Email service
+  6. Add a new Email Service 
+     1. Currently only Gmail is supported. Stay tunned for instructions on how to add a new service. 
 
-## Known Issues:
+## Known Issues
+
   - Gmail autentication redirections says it's unsafe
 
-## How to Execute:
+## How to Execute
+
   - You, as a developer, need a `credential.json` file provided by Gmail with the `readonly gmail api` activated. The file should be placed along side the `main.py` file. You can find instructions on how to get it from this [Quickstart Guide](https://developers.google.com/gmail/api/quickstart/python). It looks something like this:
   ```json
   {
@@ -122,10 +128,12 @@ The ouput right now is an csv file delimited by pipes ("|") but the goal is to r
     - `python main.py bhdleon example@gmail.com`
 
 
-## How to contribute:
+## How to contribute
+
   - ### Add a new Bank
+
     Guided by the current implementations (`./banks_mail_readers/bhdleon_reader.py`), there are some things to consider:
-      - The file with the code must be named with the prefix of the expected argument you want it to be called from main, conbine with `_reader`.
+      - The file with the code must be named with the prefix of the expected argument you want it to be called from main, combine with `_reader`.
         > Example: __bhdleon__ is `bhdleon_reader.py` and from the main the argument it is called with is `bhdleon`.
       - The bank reader class must call the super class with the email the bank uses to send the transactions details.
         > Example:
@@ -136,8 +144,10 @@ The ouput right now is an csv file delimited by pipes ("|") but the goal is to r
 
         ```
       - Override the property methods with the logic of how to read the html email of the desired bank. The BaseReader class already has methods like: `get_element_by_class` and `get_elements_by_tag`.
-        > Example:
-        ```python
+
+       **Example:**
+
+      ```python
         # ... There might be other property method before and after
         @property
         def currency(self):
@@ -153,8 +163,5 @@ The ouput right now is an csv file delimited by pipes ("|") but the goal is to r
             merchant_name = merchant_name.text if merchant_name else 'None'
             return merchant_name
         ```
-    That is all, from `main.py` and base on the argument passed when running the file y will find all suscribed banks.
-
-  ### Add a new Email Service
-  Currently only Gmail is supported. Stay tunned for intructions on how to add a new service.
+    That is all, from `main.py` and base on the argument passed when running the file y will find all subscribed banks.
 
