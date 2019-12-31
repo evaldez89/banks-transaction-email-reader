@@ -2,8 +2,7 @@
 venv
 credential*
 token*
-*.csv
-*.txt
 */__pycache__
 /__pycache__
 .python-version
+/test_files
