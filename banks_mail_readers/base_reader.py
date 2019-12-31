@@ -34,6 +34,10 @@ class BaseReader(ABC):
     def type(self):
         pass
 
+    @abstractproperty
+    def subjetcs_to_ignore(self):
+        pass
+
     def get_element_by_class(self, element_tag: str,
                              attr: str, attr_value: str) -> Tag:
         return self.html.find(element_tag, {attr: attr_value})

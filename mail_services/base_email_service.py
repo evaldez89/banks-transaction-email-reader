@@ -1,5 +1,6 @@
 from datetime import date, datetime, timedelta
 from base64 import urlsafe_b64decode
+from banks_mail_readers.base_reader import BaseReader
 
 
 class EmailService():
@@ -12,10 +13,13 @@ class EmailService():
         self.date_to = date.today() + timedelta(1)
         self.date_from = self.date_to - timedelta(days_from)
 
-    def get_query(self, bank_email):
+    def get_query(self, bank: BaseReader):
         query = f'before: {self.date_to:%Y/%m/%d}'
         query += f' after: {self.date_from:%Y/%m/%d}'
-        query += f' from:{bank_email}'
+        query += f' from:{bank.email} '
+
+        for sbj in bank.subjetcs_to_ignore:
+            query += f'-"{sbj}" '
 
         return query
 
