@@ -7,8 +7,10 @@ class EmailService():
         self.name = 'Base Service'
         self.credentials = None
         self.service = None
-        self.date_to = date.today()
-        self.date_from = self.date_to - timedelta(300)
+        # End date must be tomorrow in order to
+        # To Ensure all messages (including today) al fetched
+        self.date_to = date.today() + timedelta(1)
+        self.date_from = self.date_to - timedelta(days_from)
 
     def get_query(self, bank_email):
         query = f'before: {self.date_to:%Y/%m/%d}'
