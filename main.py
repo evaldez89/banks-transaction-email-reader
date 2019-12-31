@@ -15,8 +15,9 @@ def is_bank_module_name(bank_info: dict, bank_arg: str):
 def main(**kwargs):
 
     arguments = kwargs.get('arguments')
+    bank_arg = arguments.get('bank')
     bank_class_info = [bank for bank in SUBSCRIBED_BANKS
-                       if is_bank_module_name(bank, arguments.get('bank'))]
+                       if is_bank_module_name(bank, bank_arg)]
 
     bank_factory = BankReaderFactory()
 
@@ -24,7 +25,7 @@ def main(**kwargs):
         try:
             bank_class = bank_factory.get_bank(bank_class_info[0])
         except Exception as e:
-            error_message = f'Undefined Bank "{arguments.get('bank')}"'
+            error_message = f'Undefined Bank "{bank_arg}"'
             raise ValueError(error_message) from e
         else:
             bank = bank_class()
