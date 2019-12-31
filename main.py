@@ -19,17 +19,20 @@ def main(**kwargs):
                        if is_bank_module_name(bank, arguments.get('bank'))]
 
     bank_factory = BankReaderFactory()
-    bank = None
 
     if bank_class_info:
-        bank_class = bank_factory.get_bank(bank_class_info[0])
-        bank = bank_class()
+        try:
+            bank_class = bank_factory.get_bank(bank_class_info[0])
+        except Exception as e:
+            error_message = f'Undefined Bank "{arguments.get('bank')}"'
+            raise ValueError(error_message) from e
+        else:
+            bank = bank_class()
 
-    if bank is not None:
-        gmail = GmailService(100)
-        gmail.authenticate()
-        gmail.build_service()
-        gmail.read_mail(bank)
+            gmail = GmailService(100)
+            gmail.authenticate()
+            gmail.build_service()
+            gmail.read_mail(bank)
 
 
 if __name__ == '__main__':
