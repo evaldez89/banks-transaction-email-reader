@@ -20,8 +20,7 @@ The ouput right now is an csv file delimited by pipes ("|") but the goal is to r
 
 
 ## Known TODO's:
-  1. When running the main file, one parameter should be the user email to determine which mail service to use
-  1. Rigth now it's only expecting multipart emails (threads) not single messages
+  1. Determine which mail service to use base on the main parameter for the user email
   1. How to hanlde email credentials?
   1. How to handle email authentication token?
   1. Add Outlook Email service
@@ -30,6 +29,8 @@ The ouput right now is an csv file delimited by pipes ("|") but the goal is to r
   - Gmail autentication redirections says it's unsafe
 
 ## How to Execute:
+  - Python versions that I can assure this work with: 
+    >3.6.9
   - You, as a developer, need a `credential.json` file provided by Gmail with the `readonly gmail api` activated. The file should be placed along side the `main.py` file. You can find instructions on how to get it from this [Quickstart Guide](https://developers.google.com/gmail/api/quickstart/python). It looks something like this:
   ```json
   {
