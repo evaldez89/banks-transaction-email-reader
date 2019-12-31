@@ -11,31 +11,31 @@ class BaseReader(ABC):
         self.html = BeautifulSoup(raw_html, 'html.parser')
 
     @abstractproperty
-    def date(self):
+    def date(self) -> str:
         pass
 
     @abstractproperty
-    def currency(self):
+    def currency(self) -> str:
         pass
 
     @abstractproperty
-    def amount(self):
+    def amount(self) -> float:
         pass
 
     @abstractproperty
-    def merchant(self):
+    def merchant(self) -> str:
         pass
 
     @abstractproperty
-    def status(self):
+    def status(self) -> str:
         pass
 
     @abstractproperty
-    def type(self):
+    def type(self) -> str:
         pass
 
     @abstractproperty
-    def subjetcs_to_ignore(self):
+    def subjetcs_to_ignore(self) -> list:
         pass
 
     def get_element_by_class(self, element_tag: str,

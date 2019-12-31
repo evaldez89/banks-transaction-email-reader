@@ -15,7 +15,13 @@ class BHDLeonHtmlReader(BaseReader):
 
     @property
     def amount(self):
-        return self.get_element_by_class('td', 'class', 't_monto').text
+        value = 0
+        try:
+            value = self.get_element_by_class('td', 'class', 't_monto').text
+            value = float(value)
+        except ValueError:
+            pass
+        return value
 
     @property
     def merchant(self):
