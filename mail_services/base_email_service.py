@@ -1,4 +1,5 @@
 from datetime import date, datetime, timedelta
+from base64 import urlsafe_b64decode
 
 
 class EmailService():
@@ -15,6 +16,17 @@ class EmailService():
         query += f' from:{bank_email}'
 
         return query
+
+    def get_message_body(self, encoded_data: str) -> str:
+        """Decode message body to be able to parse it to HTML.
+
+        Arguments:
+            encoded_data {str} -- base64 encode html message
+
+        Returns:
+            str -- decoded html message
+        """
+        return urlsafe_b64decode(encoded_data)
 
     def authenticate(self):
         raise NotImplementedError
