@@ -108,6 +108,9 @@ Output Example:
 
 ## How to Execute
 
+  - Python versions that I can assure this work with: 
+    >3.6.9
+    
   - You, as a developer, need a `credential.json` file provided by Gmail with the `readonly gmail api` activated. The file should be placed along side the `main.py` file. You can find instructions on how to get it from this [Quickstart Guide](https://developers.google.com/gmail/api/quickstart/python). It looks something like this:
   ```json
   {
@@ -125,9 +128,9 @@ Output Example:
     }
   }
   ```
+  - Install requirements: `python -m pip install -r requirements.txt`
   - After having that, all you need is run:
     - `python main.py bhdleon example@gmail.com`
-
 
 ## How to contribute
 
@@ -166,3 +169,4 @@ Output Example:
         ```
     That is all, from `main.py` and base on the argument passed when running the file y will find all subscribed banks.
 
+## Make sure to checkout the [CONTRIBUTING.md](./CONTRIBUTING.md) guidelines.

@@ -1,7 +1,6 @@
 import os.path
 import pickle
 import tempfile
-from base64 import urlsafe_b64decode
 from datetime import date, datetime, timedelta
 
 from google.auth.transport.requests import Request
@@ -55,17 +54,16 @@ class GmailService(EmailService):
     def build_service(self):
         self.service = build('gmail', 'v1', credentials=self.credentials)
 
-    def fetch_mail(self, bank_email: str) -> list:
-        query = self.get_query(bank_email)
+    def fetch_mail(self, bank: BaseReader) -> list:
+        query = self.get_query(bank)
         results = self.service.users().messages().list(userId='me',
-                                                       labelIds=['INBOX'],
                                                        q=query)
         results = results.execute()
 
         return results.get('messages', [])
 
     def read_mail(self, bank: BaseReader):
-        messages = self.fetch_mail(bank.email)
+        messages = self.fetch_mail(bank)
 
         for message in messages:
             msg = self.service.users().messages().get(userId='me',
@@ -77,19 +75,20 @@ class GmailService(EmailService):
             date_time_obj = datetime.fromtimestamp(epoc_ms)\
                 .strftime(date_format)
 
-            # TODO: Leear cuando no es multipart
+            bodies = list()
             if msg['payload']['mimeType'] == 'multipart/related':
-                line = ''
-                for part in msg['payload']['parts']:
-                    if part['mimeType'] == 'text/html':
-                        message_body = urlsafe_b64decode(part['body']['data'])
-                        bank.feed(message_body)
+                for body in msg['payload']['parts']:
+                    if body['mimeType'] == 'text/html':
+                        bodies.append(body['body']['data'])
+            elif msg['payload']['mimeType'] == 'text/html':
+                bodies.append(msg['payload']['body']['data'])
 
-                        line = f"{bank.date}|{bank.currency}|"
-                        line += f"{bank.amount}|{bank.merchant}|"
-                        line += f"{bank.status}|{bank.type}\n"
+            for message_body in bodies:
+                bank.feed(self.get_message_body(message_body))
 
-                        with open('transactions.csv', 'a+') as the_file:
-                            the_file.write(line)
-            else:
-                print('no se leyó: ', msg['payload']['mimeType'])
+                line = f"{bank.date}|{bank.currency}|"
+                line += f"{bank.amount}|{bank.merchant}|"
+                line += f"{bank.status}|{bank.type}\n"
+
+                with open('transactions.csv', 'a+') as the_file:
+                    the_file.write(line)
