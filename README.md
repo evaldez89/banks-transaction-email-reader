@@ -13,9 +13,9 @@ Output Example:
 
 ## Task Legend
 
-:construction: work in progress
+:construction: Work in progress
 
-:white_check_mark: when task is done
+:white_check_mark: When task is done
 
 :alarm_clock: Pending
 
@@ -24,9 +24,10 @@ Output Example:
 - [ ] BanReservas :alarm_clock:
 
 ### Bancos Comerciales
-- [ ] Banco Vimenca (Dominican Republic) :alarm_clock:
+
+- [ ] Banco Vimenca (Dominican Republic) :construction:
 - [ ] Banco Popular Dominicano :alarm_clock:
-- [ ] Banco BHD León :alarm_clock:
+- [ ] Banco BHD León :white_check_mark:
 - [ ] Banco del Progreso :alarm_clock:
 - [ ] Banco Santa Cruz :alarm_clock:
 - [ ] Banco Caribe :alarm_clock:
