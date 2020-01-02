@@ -4,24 +4,28 @@ from banks_mail_readers.base_reader import BaseReader
 
 
 class EmailService():
+
+    query = ''
+    date_to = date.today() + timedelta(1)
+
     def __init__(self, days_from: int):
         self.name = 'Base Service'
         self.credentials = None
         self.service = None
         # End date must be tomorrow in order to
         # To Ensure all messages (including today) al fetched
-        self.date_to = date.today() + timedelta(1)
         self.date_from = self.date_to - timedelta(days_from)
 
+        self.query = f'before: {self.date_to:%Y/%m/%d}'
+        f' after: {self.date_from:%Y/%m/%d}'
+
     def get_query(self, bank: BaseReader):
-        query = f'before: {self.date_to:%Y/%m/%d}'
-        query += f' after: {self.date_from:%Y/%m/%d}'
-        query += f' from:{bank.email} '
+        self.query += f' from:{bank.email} '
 
         for sbj in bank.subjetcs_to_ignore:
-            query += f'-"{sbj}" '
+            self.query += f'-"{sbj}" '
 
-        return query
+        return self.query
 
     def get_message_body(self, encoded_data: str) -> str:
         """Decode message body to be able to parse it to HTML.
