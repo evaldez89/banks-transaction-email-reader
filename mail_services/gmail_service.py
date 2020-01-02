@@ -90,5 +90,5 @@ class GmailService(EmailService):
                 line += f"{bank.amount}|{bank.merchant}|"
                 line += f"{bank.status}|{bank.type}\n"
 
-                with open('transactions.csv', 'a+') as the_file:
+                with open('./test_files/transactions.csv', 'a+') as the_file:
                     the_file.write(line)
