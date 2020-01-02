@@ -19,13 +19,14 @@ class EmailService():
         self.query = f'before: {self.date_to:%Y/%m/%d}'
         f' after: {self.date_from:%Y/%m/%d}'
 
-    def get_query(self, bank: BaseReader):
-        self.query += f' from:{bank.email} '
+    @classmethod
+    def get_query(cls, bank: BaseReader):
+        cls.query += f' from:{bank.email} '
 
         for sbj in bank.subjetcs_to_ignore:
-            self.query += f'-"{sbj}" '
+            cls.query += f'-"{sbj}" '
 
-        return self.query
+        return cls.query
 
     def get_message_body(self, encoded_data: str) -> str:
         """Decode message body to be able to parse it to HTML.
