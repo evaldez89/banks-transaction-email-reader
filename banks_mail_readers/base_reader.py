@@ -35,7 +35,7 @@ class BaseReader(ABC):
         pass
 
     @abstractproperty
-    def subjetcs_to_ignore(self) -> list:
+    def subjetcs_to_include(self) -> list:
         pass
 
     def get_element_by_class(self, element_tag: str,
