@@ -31,4 +31,6 @@ class VimencaHtmlReader(BaseReader):
 
     @property
     def subjetcs_to_include(self):
-        pass
+        return [
+            'Notificación de Transacción'
+        ]
