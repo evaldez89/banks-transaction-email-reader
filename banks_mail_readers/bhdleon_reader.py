@@ -38,8 +38,8 @@ class BHDLeonHtmlReader(BaseReader):
         return self.get_element_by_class('td', 'class', 't_tipo').text
 
     @property
-    def subjetcs_to_ignore(self):
-        # TODO: Debe haber mas que necesiten ser ignorados
+    def subjetcs_to_include(self):
+        # TODO: Debe haber mas que necesiten ser leídos
         return [
-            'Notificacion de Retiro de PIN Pesos'
+            'Alerta BHDLeón'
         ]

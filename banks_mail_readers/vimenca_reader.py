@@ -30,5 +30,5 @@ class VimencaHtmlReader(BaseReader):
         pass
 
     @property
-    def subjetcs_to_ignore(self):
+    def subjetcs_to_include(self):
         pass
