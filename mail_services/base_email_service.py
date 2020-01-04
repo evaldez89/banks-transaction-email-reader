@@ -5,7 +5,6 @@ from banks_mail_readers.base_reader import BaseReader
 
 class EmailService():
 
-    query = ''
     date_to = date.today() + timedelta(1)
 
     def __init__(self, days_from: int):
@@ -16,17 +15,17 @@ class EmailService():
         # To Ensure all messages (including today) al fetched
         self.date_from = self.date_to - timedelta(days_from)
 
-        self.query = f'before: {self.date_to:%Y/%m/%d}'
-        f' after: {self.date_from:%Y/%m/%d}'
+        self.query = f'before:{self.date_to:%Y/%m/%d} ' \
+                     f'after:{self.date_from:%Y/%m/%d}'
 
-    @classmethod
-    def get_query(cls, bank: BaseReader):
-        cls.query += f' from:{bank.email} '
+    def get_query(self, bank: BaseReader):
+        self.query += f' from:{bank.email} '
 
-        for sbj in bank.subjetcs_to_ignore:
-            cls.query += f'-"{sbj}" '
+        self.query += f"""subject:("{'" OR "'.join(
+            bank.subjetcs_to_include
+        )}")"""
 
-        return cls.query
+        return self.query
 
     def get_message_body(self, encoded_data: str) -> str:
         """Decode message body to be able to parse it to HTML.
@@ -37,7 +36,7 @@ class EmailService():
         Returns:
             str -- decoded html message
         """
-        return urlsafe_b64decode(encoded_data)
+        return str(urlsafe_b64decode(encoded_data))
 
     def authenticate(self):
         raise NotImplementedError
