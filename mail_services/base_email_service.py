@@ -27,7 +27,7 @@ class EmailService():
 
         return self.query
 
-    def get_message_body(self, encoded_data: str) -> str:
+    def get_message_body(self, encoded_data: str):
         """Decode message body to be able to parse it to HTML.
 
         Arguments:
@@ -36,7 +36,7 @@ class EmailService():
         Returns:
             str -- decoded html message
         """
-        return str(urlsafe_b64decode(encoded_data))
+        return urlsafe_b64decode(encoded_data)
 
     def authenticate(self):
         raise NotImplementedError
