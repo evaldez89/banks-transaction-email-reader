@@ -44,3 +44,14 @@ class BaseReader(ABC):
 
     def get_elements_by_tag(self, tag: str) -> list:
         return [element for element in self.html.select(tag)]
+
+    @staticmethod
+    def filter_element_by_text(elements: list, text_critiria: str) -> Tag:
+        element = None
+        for tag in elements:
+            if tag.text.strip() not in ['', '\n'] and \
+                    text_critiria in tag.text:
+                element = tag
+                break
+
+        return element
