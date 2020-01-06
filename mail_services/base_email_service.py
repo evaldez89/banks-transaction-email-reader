@@ -1,10 +1,12 @@
-from datetime import date, datetime, timedelta
+from abc import ABC, abstractmethod
 from base64 import urlsafe_b64decode
-from banks_mail_readers.base_reader import BaseReader
+from datetime import date, datetime, timedelta
 from typing import Any  # TODO: Create base interface for email service to stop using 'Any' as a type
 
+from banks_mail_readers.base_reader import BaseReader
 
-class EmailService():
+
+class EmailService(ABC):
 
     date_to = date.today() + timedelta(1)
 
@@ -39,14 +41,18 @@ class EmailService():
         """
         return urlsafe_b64decode(encoded_data)
 
+    @abstractmethod
     def authenticate(self):
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     def build_service(self):
-        raise NotImplementedError
+        pass
 
-    def query_mail(self):
-        raise NotImplementedError
+    @abstractmethod
+    def fetch_mail(self, bank: BaseReader) -> list:
+        pass
 
-    def read_mail(self):
-        raise NotImplementedError
+    @abstractmethod
+    def read_mail(self, bank: BaseReader):
+        pass
