@@ -16,6 +16,7 @@ def main(**kwargs):
 
     arguments = kwargs.get('arguments')
     bank_arg = arguments.get('bank')
+    days_from = arguments.get('days_from')
     bank_class_info = [bank for bank in SUBSCRIBED_BANKS
                        if is_bank_module_name(bank, bank_arg)]
 
@@ -30,7 +31,7 @@ def main(**kwargs):
         else:
             bank = bank_class()
 
-            gmail = GmailService(100)
+            gmail = GmailService(days_from)
             gmail.authenticate()
             gmail.build_service()
             gmail.read_mail(bank)
@@ -51,6 +52,11 @@ if __name__ == '__main__':
 
     arg_parser.add_argument(
         'email', help='The email account to read from'
+    )
+
+    arg_parser.add_argument(
+        '--days_from', help='Days to read from on the mail server',
+        default=100
     )
 
     kwargs = dict()
