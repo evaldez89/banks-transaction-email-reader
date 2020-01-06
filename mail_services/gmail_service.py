@@ -84,7 +84,7 @@ class GmailService(EmailService):
                 bodies.append(msg['payload']['body']['data'])
 
             for message_body in bodies:
-                bank.feed(self.decode_message_body(message_body), subject)
+                bank.feed(self.decode_message_body(message_body))
 
                 line = f"{bank.date}|{bank.currency}|"
                 line += f"{bank.amount}|{bank.merchant}|"
