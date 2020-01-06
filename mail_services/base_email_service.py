@@ -1,6 +1,7 @@
 from datetime import date, datetime, timedelta
 from base64 import urlsafe_b64decode
 from banks_mail_readers.base_reader import BaseReader
+from typing import Any  # TODO: Create base interface for email service to stop using 'Any' as a type
 
 
 class EmailService():
@@ -10,7 +11,7 @@ class EmailService():
     def __init__(self, days_from: int):
         self.name = 'Base Service'
         self.credentials = None
-        self.service = None
+        self.service: Any = None
         # End date must be tomorrow in order to
         # To Ensure all messages (including today) al fetched
         self.date_from = self.date_to - timedelta(days_from)
