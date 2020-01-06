@@ -8,7 +8,7 @@ SUBSCRIBED_BANKS = get_subscribed_banks()
 
 
 def is_bank_module_name(bank_info: dict, bank_arg: str):
-    bank_name = bank_info.get('module').split('.')[1][:-7]
+    bank_name = bank_info.get('module', '').split('.')[1][:-7]
     return bank_name == bank_arg
 
 
