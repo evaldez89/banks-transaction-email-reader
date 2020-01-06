@@ -28,7 +28,7 @@ class EmailService():
 
         return self.query
 
-    def get_message_body(self, encoded_data: str):
+    def decode_message_body(self, encoded_data: str):
         """Decode message body to be able to parse it to HTML.
 
         Arguments:
