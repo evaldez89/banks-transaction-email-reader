@@ -14,9 +14,8 @@ def is_bank_module_name(bank_info: dict, bank_arg: str):
 
 def main(**kwargs):
 
-    arguments = kwargs.get('arguments')
-    bank_arg = arguments.get('bank')
-    days_from = arguments.get('days_from')
+    bank_arg = kwargs.get('bank')
+    days_from = kwargs.get('days_from')
     bank_class_info = [bank for bank in SUBSCRIBED_BANKS
                        if is_bank_module_name(bank, bank_arg)]
 
@@ -31,6 +30,7 @@ def main(**kwargs):
         else:
             bank = bank_class()
 
+            # TODO: Get email service from email parameter
             gmail = GmailService(days_from)
             gmail.authenticate()
             gmail.build_service()
@@ -65,4 +65,4 @@ if __name__ == '__main__':
         if v:
             kwargs[k] = v
 
-    main(arguments=kwargs)
+    main(**kwargs)
