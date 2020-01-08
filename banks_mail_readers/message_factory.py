@@ -5,11 +5,11 @@ import importlib
 class MessageFactory():
     @staticmethod
     def get_bank_messages(bank_name) -> list:
-        message_packages = MessageFactory.__bank_messages(bank_name)
+        messages_module_info = MessageFactory.__bank_messages_module_info(bank_name)
 
         messages_classess = list()
 
-        for message_info in message_packages:
+        for message_info in messages_module_info:
             message_class = getattr(
                 importlib.import_module(message_info.get('module', '')),
                 message_info.get('main_class', '')
@@ -20,7 +20,7 @@ class MessageFactory():
         return messages_classess
 
     @staticmethod
-    def __bank_messages(bank_name: str) -> list:
+    def __bank_messages_module_info(bank_name: str) -> list:
         from .message import MessageAbs
         messages = list()
         for child in MessageAbs.__subclasses__():
