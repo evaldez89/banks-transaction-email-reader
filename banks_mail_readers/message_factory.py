@@ -1,4 +1,4 @@
-from . import vimenca_messages
+from . import vimenca_messages, bhdleon_messages
 import importlib
 
 
