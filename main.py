@@ -19,16 +19,16 @@ def main(**kwargs):
     bank_class_info = [bank for bank in SUBSCRIBED_BANKS
                        if is_bank_module_name(bank, bank_arg)]
 
-    bank_factory = BankReaderFactory()
-
     if bank_class_info:
+        bank_factory = BankReaderFactory()
+
         try:
             bank_class = bank_factory.get_bank(bank_class_info[0])
         except Exception as e:
             error_message = f'Undefined Bank "{bank_arg}"'
             raise ValueError(error_message) from e
         else:
-            bank = bank_class()
+            bank = bank_class(name=bank_arg)
 
             # TODO: Get email service from email parameter
             gmail = GmailService(days_from)
