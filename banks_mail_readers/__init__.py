@@ -1,7 +1,5 @@
+# Add all module to be dinamically import
 from . import vimenca_reader, bhdleon_reader
-# TODO: Posiblemente hacer los imports de los bancos
-# ya no sea necesario debido a que se esta haciendo
-# dinamicamente
 
 
 def get_subscribed_banks() -> list:
