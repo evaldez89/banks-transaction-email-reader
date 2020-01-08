@@ -8,6 +8,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
 from banks_mail_readers.base_reader import BaseReader
+from banks_mail_readers.message_factory import MessageFactory
 
 from .base_email_service import EmailService
 
@@ -54,8 +55,8 @@ class GmailService(EmailService):
     def build_service(self):
         self.service = build('gmail', 'v1', credentials=self.credentials)
 
-    def fetch_mail(self, bank: BaseReader) -> list:
-        query = self.get_query(bank)
+    def fetch_mail(self, bank_email: str, subjects: list) -> list:
+        query = self.get_query(bank_email, subjects)
         results = self.service.users().messages().list(userId='me',
                                                        q=query)
         results = results.execute()
@@ -63,32 +64,33 @@ class GmailService(EmailService):
         return results.get('messages', [])
 
     def read_mail(self, bank: BaseReader):
-        messages = self.fetch_mail(bank)
+        message_factory = MessageFactory()
 
-        for message in messages:
-            msg = self.service.users().messages().get(userId='me',
+        for message_class in message_factory.get_bank_messages(bank.name):
+            message_instance = message_class()
+            for message in self.fetch_mail(bank.email, message_instance.subjetcs):
+                msg = self.service.users().messages().get(userId='me',
                                                       id=message['id'],
                                                       format='full').execute()
 
-            date_format = "%A, %B %d, %Y %I:%M:%S"
-            epoc_ms = int(msg['internalDate']) / 1000.0
-            date_time_obj = datetime.fromtimestamp(epoc_ms)\
-                .strftime(date_format)
+                date_format = "%A, %B %d, %Y %I:%M:%S"
+                epoc_ms = int(msg['internalDate']) / 1000.0
+                date_time_obj = datetime.fromtimestamp(epoc_ms).strftime(date_format)
 
-            bodies = list()
-            if msg['payload']['mimeType'] == 'multipart/related':
-                for body in msg['payload']['parts']:
-                    if body['mimeType'] == 'text/html':
-                        bodies.append(body['body']['data'])
-            elif msg['payload']['mimeType'] == 'text/html':
-                bodies.append(msg['payload']['body']['data'])
+                bodies = list()
+                if msg['payload']['mimeType'] == 'multipart/related':
+                    for body in msg['payload']['parts']:
+                        if body['mimeType'] == 'text/html':
+                            bodies.append(body['body']['data'])
+                elif msg['payload']['mimeType'] == 'text/html':
+                    bodies.append(msg['payload']['body']['data'])
 
-            for message_body in bodies:
-                bank.feed(self.decode_message_body(message_body))
+                for message_body in bodies:
+                    message_instance.feed(self.decode_message_body(message_body))
 
-                line = f"{bank.date}|{bank.currency}|"
-                line += f"{bank.amount}|{bank.merchant}|"
-                line += f"{bank.status}|{bank.type}\n"
+                    line = f"{message_instance.date}|{message_instance.currency}|"
+                    line += f"{message_instance.amount}|{message_instance.merchant}|"
+                    line += f"{message_instance.status}|{message_instance.type}\n"
 
-                with open('./test_files/transactions.csv', 'a+') as the_file:
-                    the_file.write(line)
+                    with open('./test_files/transactions.csv', 'a+') as the_file:
+                        the_file.write(line)

@@ -21,11 +21,11 @@ class EmailService(ABC):
         self.query = f'before:{self.date_to:%Y/%m/%d} ' \
                      f'after:{self.date_from:%Y/%m/%d}'
 
-    def get_query(self, bank: BaseReader):
-        self.query += f' from:{bank.email} '
+    def get_query(self, bank_email: str, subjects: list):
+        self.query += f' from:{bank_email} '
 
         self.query += f"""subject:("{'" OR "'.join(
-            bank.subjetcs_to_include
+            subjects
         )}")"""
 
         return self.query
@@ -50,7 +50,7 @@ class EmailService(ABC):
         pass
 
     @abstractmethod
-    def fetch_mail(self, bank: BaseReader) -> list:
+    def fetch_mail(self, bank_email: str, subjects: list) -> list:
         pass
 
     @abstractmethod
