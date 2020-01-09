@@ -42,7 +42,7 @@ class MessageAbs(ABC):
         pass
 
     @abstractproperty
-    def subjetcs(self) -> list:
+    def subjects(self) -> list:
         pass
 
     def get_element_by_class(self, element_tag: str,

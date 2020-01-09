@@ -12,7 +12,7 @@ class GeneralMessage(MessageAbs):
         return 'internetbanking@vimenca.com'
 
     @property
-    def subjetcs(self):
+    def subjects(self):
         return [
             'Notificación de Transacción',
             'Aviso Retiro de efectivo'

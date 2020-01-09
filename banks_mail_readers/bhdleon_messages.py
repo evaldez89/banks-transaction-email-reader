@@ -12,7 +12,7 @@ class GeneralMessage(MessageAbs):
         return 'alertas@bhdleon.com.do'
 
     @property
-    def subjetcs(self):
+    def subjects(self):
         return [
             'Alerta BHDLeón'
         ]
