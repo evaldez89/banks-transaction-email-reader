@@ -1,45 +1,43 @@
 from mail_services.gmail_service import GmailService
 import argparse
-from banks_mail_readers import get_subscribed_banks
-from banks_mail_readers.bank_factory import BankReaderFactory
+from banks_mail_readers.message_factory import MessageFactory
 
 
-SUBSCRIBED_BANKS = get_subscribed_banks()
-
-
-def is_bank_module_name(bank_info: dict, bank_arg: str):
-    bank_name = bank_info.get('module', '').split('.')[1][:-7]
-    return bank_name == bank_arg
+messages_factory = MessageFactory()
+SUBSCRIBED_BANKS = messages_factory.get_subscribed_banks()
 
 
 def main(**kwargs):
 
     bank_arg = kwargs.get('bank')
     days_from = kwargs.get('days_from')
-    bank_class_info = [bank for bank in SUBSCRIBED_BANKS
-                       if is_bank_module_name(bank, bank_arg)]
 
-    if bank_class_info:
-        bank_factory = BankReaderFactory()
+    for message_class in messages_factory.get_bank_messages(bank_arg):
+        message_instance = message_class()
+        gmail = GmailService(message_instance, days_from)
+        gmail.authenticate()
+        gmail.build_service()
+        gmail.read_mail()
+    # bank_factory = BankReaderFactory()
 
-        try:
-            bank_class = bank_factory.get_bank(bank_class_info[0])
-        except Exception as e:
-            error_message = f'Undefined Bank "{bank_arg}"'
-            raise ValueError(error_message) from e
-        else:
-            bank = bank_class(name=bank_arg)
+    # try:
+    #     bank_class = bank_factory.get_bank(bank_class_info[0])
+    # except Exception as e:
+    #     error_message = f'Undefined Bank "{bank_arg}"'
+    #     raise ValueError(error_message) from e
+    # else:
+    #     bank = bank_class(name=bank_arg)
 
-            # TODO: Get email service from email parameter
-            gmail = GmailService(days_from)
-            gmail.authenticate()
-            gmail.build_service()
-            gmail.read_mail(bank)
+    #     # TODO: Get email service from email parameter
+    #     gmail = GmailService(days_from)
+    #     gmail.authenticate()
+    #     gmail.build_service()
+    #     gmail.read_mail(bank)
 
 
 if __name__ == '__main__':
 
-    bank_choices = [bank_name.get('module').split('.')[1][:-7]
+    bank_choices = [messages_factory.extract_bank_name(bank_name.get('module'))
                     for bank_name in SUBSCRIBED_BANKS]
 
     arg_parser = argparse.ArgumentParser()
