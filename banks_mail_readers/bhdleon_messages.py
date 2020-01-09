@@ -1,4 +1,4 @@
-from .message import MessageAbs
+from .message_abs import MessageAbs
 
 
 class GeneralMessage(MessageAbs):

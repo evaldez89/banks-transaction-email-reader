@@ -4,7 +4,7 @@ from datetime import date, datetime, timedelta
 from typing import Any  # TODO: Create base interface for email service to stop using 'Any' as a type
 
 from banks_mail_readers.base_reader import BaseReader
-from banks_mail_readers.message import MessageAbs
+from banks_mail_readers.message_abs import MessageAbs
 
 
 class EmailService(ABC):

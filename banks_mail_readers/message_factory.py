@@ -1,7 +1,7 @@
 import importlib
 
 from . import bhdleon_messages, vimenca_messages
-from .message import MessageAbs
+from .message_abs import MessageAbs
 
 
 class MessageFactory():
