@@ -4,16 +4,18 @@ from datetime import date, datetime, timedelta
 from typing import Any  # TODO: Create base interface for email service to stop using 'Any' as a type
 
 from banks_mail_readers.base_reader import BaseReader
+from banks_mail_readers.message import MessageAbs
 
 
 class EmailService(ABC):
 
     date_to = date.today() + timedelta(1)
 
-    def __init__(self, days_from: int):
+    def __init__(self, message_template: MessageAbs, days_from: int):
         self.name = 'Base Service'
         self.credentials = None
         self.service: Any = None
+        self.message_template = message_template
         # End date must be tomorrow in order to
         # To Ensure all messages (including today) al fetched
         self.date_from = self.date_to - timedelta(days_from)
@@ -21,14 +23,9 @@ class EmailService(ABC):
         self.query = f'before:{self.date_to:%Y/%m/%d} ' \
                      f'after:{self.date_from:%Y/%m/%d}'
 
-    def get_query(self, bank_email: str, subjects: list):
-        self.query += f' from:{bank_email} '
-
-        self.query += f"""subject:("{'" OR "'.join(
-            subjects
-        )}")"""
-
-        return self.query
+    @abstractmethod
+    def construct_query(self):
+        pass
 
     def decode_message_body(self, encoded_data: str):
         """Decode message body to be able to parse it to HTML.
@@ -50,9 +47,9 @@ class EmailService(ABC):
         pass
 
     @abstractmethod
-    def fetch_mail(self, bank_email: str, subjects: list) -> list:
+    def fetch_mail(self) -> list:
         pass
 
     @abstractmethod
-    def read_mail(self, bank: BaseReader):
+    def read_mail(self):
         pass
