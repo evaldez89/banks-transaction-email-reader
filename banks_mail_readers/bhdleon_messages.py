@@ -2,7 +2,14 @@ from .message import MessageAbs
 
 
 class GeneralMessage(MessageAbs):
-    bank = 'bhdleon'
+
+    @classmethod
+    def bank_name(cls):
+        return 'bhdleon'
+
+    @classmethod
+    def bank_email(cls):
+        return 'alertas@bhdleon.com.do'
 
     @property
     def subjetcs(self):

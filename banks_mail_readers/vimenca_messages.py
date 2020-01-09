@@ -2,11 +2,14 @@ from .message import MessageAbs
 
 
 class GeneralMessage(MessageAbs):
-    bank = 'vimenca'
 
-    def __init__(self):
-        self.td_elements = list()
-        return super().__init__()
+    @classmethod
+    def bank_name(cls):
+        return 'vimenca'
+
+    @classmethod
+    def bank_email(cls):
+        return 'internetbanking@vimenca.com'
 
     @property
     def subjetcs(self):
