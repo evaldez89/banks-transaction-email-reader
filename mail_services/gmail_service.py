@@ -7,7 +7,6 @@ from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
-from banks_mail_readers.base_reader import BaseReader
 from banks_mail_readers.message_abs import MessageAbs
 
 from .base_email_service import EmailService
