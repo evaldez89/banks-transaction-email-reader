@@ -1,14 +1,25 @@
-from bs4 import BeautifulSoup, Tag
+from abc import ABC, abstractmethod, abstractproperty
 from datetime import date, datetime, timedelta
-from abc import ABC, abstractproperty
+
+from bs4 import BeautifulSoup, Tag
 
 
-class BaseReader(ABC):
-    def __init__(self, email: str):
-        self.email = email
+class MessageAbs(ABC):
+    def __init__(self):
+        self.html: BeautifulSoup = None
 
     def feed(self, raw_html: str):
         self.html = BeautifulSoup(raw_html, 'html.parser')
+
+    @classmethod
+    @abstractmethod
+    def bank_name(cls):
+        pass
+
+    @classmethod
+    @abstractmethod
+    def bank_email(cls):
+        pass
 
     @abstractproperty
     def date(self) -> str:
@@ -31,11 +42,7 @@ class BaseReader(ABC):
         pass
 
     @abstractproperty
-    def type(self) -> str:
-        pass
-
-    @abstractproperty
-    def subjetcs_to_include(self) -> list:
+    def subjects(self) -> list:
         pass
 
     def get_element_by_class(self, element_tag: str,

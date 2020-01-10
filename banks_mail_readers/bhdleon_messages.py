@@ -1,9 +1,21 @@
-from .base_reader import BaseReader
+from .message_abs import MessageAbs
 
 
-class BHDLeonHtmlReader(BaseReader):
-    def __init__(self):
-        return super().__init__('alertas@bhdleon.com.do')
+class GeneralMessage(MessageAbs):
+
+    @classmethod
+    def bank_name(cls):
+        return 'bhdleon'
+
+    @classmethod
+    def bank_email(cls):
+        return 'alertas@bhdleon.com.do'
+
+    @property
+    def subjects(self):
+        return [
+            'Alerta BHDLeón'
+        ]
 
     @property
     def date(self):
@@ -36,10 +48,3 @@ class BHDLeonHtmlReader(BaseReader):
     @property
     def type(self):
         return self.get_element_by_class('td', 'class', 't_tipo').text
-
-    @property
-    def subjetcs_to_include(self):
-        # TODO: Debe haber mas que necesiten ser leídos
-        return [
-            'Alerta BHDLeón'
-        ]

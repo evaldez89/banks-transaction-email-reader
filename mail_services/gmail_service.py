@@ -7,7 +7,7 @@ from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
-from banks_mail_readers.base_reader import BaseReader
+from banks_mail_readers.message_abs import MessageAbs
 
 from .base_email_service import EmailService
 
@@ -16,14 +16,21 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 
 
 class GmailService(EmailService):
-    def __init__(self, days_from: int):
-        super().__init__(days_from)
+    def __init__(self, message_tempalte: MessageAbs, days_from: int):
+        super().__init__(message_tempalte, days_from)
         self.name = 'Gmail Service'
 
     def _credentials_need_refresh(self):
         return self.credentials \
             and self.credentials.expired \
             and self.credentials.refresh_token
+
+    def construct_query(self):
+        self.query += f' from:{self.message_template.bank_email()} '
+
+        self.query += f"""subject:("{'" OR "'.join(
+            self.message_template.subjects
+        )}")"""
 
     def authenticate(self):
         # The file token.pickle stores the user's access and refresh tokens,
@@ -54,26 +61,23 @@ class GmailService(EmailService):
     def build_service(self):
         self.service = build('gmail', 'v1', credentials=self.credentials)
 
-    def fetch_mail(self, bank: BaseReader) -> list:
-        query = self.get_query(bank)
+    def fetch_mail(self) -> list:
+        self.construct_query()
         results = self.service.users().messages().list(userId='me',
-                                                       q=query)
+                                                       q=self.query)
         results = results.execute()
 
         return results.get('messages', [])
 
-    def read_mail(self, bank: BaseReader):
-        messages = self.fetch_mail(bank)
-
-        for message in messages:
+    def read_mail(self):
+        for message in self.fetch_mail():
             msg = self.service.users().messages().get(userId='me',
-                                                      id=message['id'],
-                                                      format='full').execute()
+                                                    id=message['id'],
+                                                    format='full').execute()
 
             date_format = "%A, %B %d, %Y %I:%M:%S"
             epoc_ms = int(msg['internalDate']) / 1000.0
-            date_time_obj = datetime.fromtimestamp(epoc_ms)\
-                .strftime(date_format)
+            date_time_obj = datetime.fromtimestamp(epoc_ms).strftime(date_format)
 
             bodies = list()
             if msg['payload']['mimeType'] == 'multipart/related':
@@ -84,11 +88,11 @@ class GmailService(EmailService):
                 bodies.append(msg['payload']['body']['data'])
 
             for message_body in bodies:
-                bank.feed(self.decode_message_body(message_body))
+                self.message_template.feed(self.decode_message_body(message_body))
 
-                line = f"{bank.date}|{bank.currency}|"
-                line += f"{bank.amount}|{bank.merchant}|"
-                line += f"{bank.status}|{bank.type}\n"
+                line = f"{self.message_template.date}|{self.message_template.currency}|"
+                line += f"{self.message_template.amount}|{self.message_template.merchant}|"
+                line += f"{self.message_template.status}|{self.message_template.type}\n"
 
                 with open('./test_files/transactions.csv', 'a+') as the_file:
                     the_file.write(line)

@@ -1,10 +1,22 @@
-from .base_reader import BaseReader
+from .message_abs import MessageAbs
 
 
-class VimencaHtmlReader(BaseReader):
-    def __init__(self):
-        self.td_elements = list()
-        return super().__init__('internetbanking@vimenca.com')
+class GeneralMessage(MessageAbs):
+
+    @classmethod
+    def bank_name(cls):
+        return 'vimenca'
+
+    @classmethod
+    def bank_email(cls):
+        return 'internetbanking@vimenca.com'
+
+    @property
+    def subjects(self):
+        return [
+            'Notificación de Transacción',
+            'Aviso Retiro de efectivo'
+        ]
 
     def feed(self, raw_html):
         super().feed(raw_html)
@@ -56,10 +68,3 @@ class VimencaHtmlReader(BaseReader):
     @property
     def type(self):
         return self.get_field_value_by_header('Tipo de Transacción').strip()
-
-    @property
-    def subjetcs_to_include(self):
-        return [
-            'Notificación de Transacción',
-            'Aviso Retiro de efectivo'
-        ]
