@@ -54,7 +54,7 @@ if __name__ == '__main__':
 
     arg_parser.add_argument(
         '--days_from', help='Days to read from on the mail server',
-        default=100
+        default=366
     )
 
     kwargs = dict()
