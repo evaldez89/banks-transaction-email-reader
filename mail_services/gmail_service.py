@@ -28,9 +28,21 @@ class GmailService(EmailService):
     def construct_query(self):
         self.query += f' from:{self.message_template.bank_email()} '
 
+        included_sbj = [x for x in self.message_template.subjects if x[0] != '-']
+        excluded_sbj = [x[1:] for x in self.message_template.subjects if x[0] == '-']
+
         self.query += f"""subject:("{'" OR "'.join(
-            self.message_template.subjects
+            included_sbj
         )}")"""
+
+        if excluded_sbj:
+            excluded = list()
+            for sbj in excluded_sbj:
+                excluded.append(f'-"{sbj}"')
+
+            self.query += f""" AND subject:({' OR '.join(
+                excluded
+            )})"""
 
     def authenticate(self):
         # The file token.pickle stores the user's access and refresh tokens,
