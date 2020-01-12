@@ -19,6 +19,7 @@ Output Example:
 
 :alarm_clock: Pending
 
+
 ## The current supported banks are:
   - Banco BHD León (Dominican Republic) :white_check_mark:
   - Banco Vimenca (Dominican Republic) :construction:
@@ -33,9 +34,8 @@ Output Example:
   6. Add a new Email Service 
      1. Currently only Gmail is supported. Stay tunned for instructions on how to add a new service. 
 
-## Known Issues
-
-  - Gmail autentication redirections says it's unsafe
+## The current supported email services are:
+  - Gmail: Using the Google api with readonly permission
 
 ## How to Execute
 
