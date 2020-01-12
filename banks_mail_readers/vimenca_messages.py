@@ -68,3 +68,62 @@ class GeneralMessage(MessageAbs):
     @property
     def type(self):
         return self.get_field_value_by_header('Tipo de Transacción').strip()
+
+
+class PaymenReceiptMessage(MessageAbs):
+
+    def __init__(self):
+        self.tables = list()
+        super().__init__()
+
+    @classmethod
+    def bank_name(cls):
+        return 'vimenca'
+
+    @classmethod
+    def bank_email(cls):
+        return 'internetbanking@vimenca.com'
+
+    @property
+    def subjects(self):
+        return [
+            'Comprobante de Pago',
+            '-Comprobante de pago beneficiario'
+        ]
+
+    def feed(self, raw_html):
+        super().feed(raw_html)
+        self.tables = [x for x in self.html.findAll('table')]
+
+    @property
+    def date(self):
+        return self.tables[1].findAll('td')[-3].text
+
+    @property
+    def currency(self):
+        value = self.tables[1].findAll('td')[-1].text
+        return value[:2]
+
+    @property
+    def amount(self):
+        value = 0
+        try:
+            value = self.tables[1].findAll('td')[-1].text
+            cleaned_value = ''.join([x for x in value[3:] if x.isdigit()])
+            value = float(cleaned_value) / 100
+        except ValueError:
+            pass
+        return value
+
+    @property
+    def merchant(self):
+        merchant_name = self.tables[2].findAll('td')[7].text
+        return merchant_name if merchant_name else None
+
+    @property
+    def status(self):
+        return 'Aprobada'
+
+    @property
+    def type(self):
+        return self.tables[1].findAll('td')[-4].text
