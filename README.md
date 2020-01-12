@@ -27,38 +27,38 @@ Output Example:
 ## Known Major Tasks TODO
 
   1. When running the main file, one parameter should be the user email to determine which mail service to use
-  2. Right now it's only expecting multipart emails (threads) not single messages
-  3. How to handle email credentials?
-  4. How to handle email authentication token?
-  5. Add Outlook Email service
-  6. Add a new Email Service 
-     1. Currently only Gmail is supported. Stay tunned for instructions on how to add a new service. 
+  1. Right now it's only expecting multipart emails (threads) not single messages
+  1. How to handle email credentials?
+  1. How to handle email authentication token?
+  1. Add Outlook Email service
+  1. Add a new Email Service
+     1. Currently only Gmail is supported. Stay tunned for instructions on how to add a new service.
 
 ## The current supported email services are:
   - Gmail: Using the Google api with readonly permission
 
 ## How to Execute
 
-  - Python versions that I can assure this work with: 
+  - Python versions that I can assure this work with:
     >3.6.9
-    
+
   - You, as a developer, need a `credential.json` file provided by Gmail with the `readonly gmail api` activated. The file should be placed along side the `main.py` file. You can find instructions on how to get it from this [Quickstart Guide](https://developers.google.com/gmail/api/quickstart/python). It looks something like this:
-  ```json
-  {
-    "installed": {
-        "client_id": "the_cliente_id",
-        "project_id": "the_project_id",
-        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-        "token_uri": "https://oauth2.googleapis.com/token",
-        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-        "client_secret": "the_client_secret",
-        "redirect_uris": [
-            "urn:ietf:wg:oauth:2.0:oob",
-            "http://localhost"
-        ]
+    ```json
+    {
+      "installed": {
+          "client_id": "the_cliente_id",
+          "project_id": "the_project_id",
+          "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+          "token_uri": "https://oauth2.googleapis.com/token",
+          "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+          "client_secret": "the_client_secret",
+          "redirect_uris": [
+              "urn:ietf:wg:oauth:2.0:oob",
+              "http://localhost"
+          ]
+      }
     }
-  }
-  ```
+    ```
   - Install requirements: `python -m pip install -r requirements.txt`
   - After having that, all you need is run:
     - `python main.py bhdleon example@gmail.com`
