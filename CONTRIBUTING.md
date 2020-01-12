@@ -1,19 +1,55 @@
 # How to contribute
-  
+
   ## Add a new Bank
-  
-  - Guided by the current implementations (`./banks_mail_readers/bhdleon_reader.py`), there are some things to consider:
-      - The file with the code must be named with the prefix of the expected argument you want it to be called from main, conbine with `_reader`.
-        > Example: __bhdleon__ is `bhdleon_reader.py` and from the main the argument it is called with is `bhdleon`.
-      - The bank reader class must call the super class with the email the bank uses to send the transactions details.
+
+  - Guided by the current implementations (`./banks_mail_readers/bhdleon_messages.py`), there are some things to consider:
+      - The file with the code must be named with the prefix of the expected argument you want it to be called from main, conbine with `_messages`.
+        > Example: __bhdleon__ is `bhdleon_messages.py` and from the main the argument it is called with is `bhdleon`.
+      - This class is to hold all the different messages identified by the subjects:
         > Example:
         ```python
-        class VimencaHtmlReader(BaseReader):
-            def __init__(self):
-            return super().__init__('ebanking@bank.com')
+        # class 1
+        class GeneralMessage(MessageAbs):
 
+        @property
+        def subjects(self):
+            return [
+                'Notificación de Transacción',
+                'Aviso Retiro de efectivo'
+            ]
+        # ------------------------------------- #
+        # class 2
+        class PaymenReceiptMessage(MessageAbs):
+
+        @property
+        def subjects(self):
+            return [
+                'Comprobante de Pago',
+                '-Comprobante de pago beneficiario'
+            ]
         ```
-      - Override the properties methods with the logic of how to read the html email of the desired bank. The BaseReader class already has methods like: `get_element_by_class` and `get_elements_by_tag`.
+      - Class property `subjects` contains all the subject to be read. In case you want to ignore a particular subject that migth be similiar in subject but different in body structure, you can append a `'-'` at the begining to ignore it (just for Gmail).
+        > Example:
+          ```python
+          @property
+          def subjects(self):
+              return [
+                  'Comprobante de Pago', # subject to look for
+                  '-Comprobante de pago beneficiario' # subject to ignore
+              ]
+          ```
+      - The bank messages class must override, among other properties, these two:
+        > Example:
+        ```python
+        @classmethod
+        def bank_name(cls):
+            return 'vimenca'
+
+        @classmethod
+        def bank_email(cls):
+            return 'internetbanking@vimenca.com'
+        ```
+      - Override the properties methods with the logic of how to read the html email of the desired bank. The MessageAbs class already has methods like: `get_element_by_class` and `get_elements_by_tag`.
         > Example:
         ```python
         # ... There are others properties method before and after
