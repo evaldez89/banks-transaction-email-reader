@@ -18,21 +18,6 @@ def main(**kwargs):
         gmail.authenticate()
         gmail.build_service()
         gmail.read_mail()
-    # bank_factory = BankReaderFactory()
-
-    # try:
-    #     bank_class = bank_factory.get_bank(bank_class_info[0])
-    # except Exception as e:
-    #     error_message = f'Undefined Bank "{bank_arg}"'
-    #     raise ValueError(error_message) from e
-    # else:
-    #     bank = bank_class(name=bank_arg)
-
-    #     # TODO: Get email service from email parameter
-    #     gmail = GmailService(days_from)
-    #     gmail.authenticate()
-    #     gmail.build_service()
-    #     gmail.read_mail(bank)
 
 
 if __name__ == '__main__':
@@ -54,7 +39,7 @@ if __name__ == '__main__':
 
     arg_parser.add_argument(
         '--days_from', help='Days to read from on the mail server',
-        default=100
+        default=366
     )
 
     kwargs = dict()
