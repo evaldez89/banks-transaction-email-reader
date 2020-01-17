@@ -70,19 +70,11 @@ class GeneralMessage(MessageAbs):
         return self.get_field_value_by_header('Tipo de Transacción').strip()
 
 
-class PaymenReceiptMessage(MessageAbs):
+class PaymenReceiptMessage(GeneralMessage):
 
     def __init__(self):
         self.tables = list()
         super().__init__()
-
-    @classmethod
-    def bank_name(cls):
-        return 'vimenca'
-
-    @classmethod
-    def bank_email(cls):
-        return 'internetbanking@vimenca.com'
 
     @property
     def subjects(self):
