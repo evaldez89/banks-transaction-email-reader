@@ -119,3 +119,45 @@ class PaymenReceiptMessage(GeneralMessage):
     @property
     def type(self):
         return self.tables[1].findAll('td')[-4].text
+
+class TransactionNotificationMessage(PaymenReceiptMessage):
+
+    @property
+    def subjects(self):
+        return [
+            'Aviso Notificación Transacción ACH'
+        ]
+
+    @property
+    def date(self):
+        value = self.tables[1].findAll('td')[-2].text
+        return value
+
+    @property
+    def currency(self):
+        value = self.tables[2].findAll('td')[-3].text
+        return value[:2]
+
+    @property
+    def amount(self):
+        value = 0
+        try:
+            value = self.tables[2].findAll('td')[-3].text
+            cleaned_value = ''.join([x for x in value[3:] if x.isdigit()])
+            value = float(cleaned_value) / 100
+        except ValueError:
+            pass
+        return value
+
+    @property
+    def merchant(self):
+        merchant_name = self.tables[2].findAll('td')[-5].text
+        return merchant_name if merchant_name else None
+
+    @property
+    def status(self):
+        return 'Aprobada'
+
+    @property
+    def type(self):
+        return self.tables[2].findAll('td')[-4].text
