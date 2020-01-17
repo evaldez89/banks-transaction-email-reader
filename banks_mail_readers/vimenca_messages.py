@@ -70,7 +70,7 @@ class GeneralMessage(MessageAbs):
         return self.get_field_value_by_header('Tipo de Transacción').strip()
 
 
-class PaymenReceiptMessage(GeneralMessage):
+class PaymenReceiptMessage(GeneralMessage, MessageAbs):
 
     def __init__(self):
         self.tables = list()
@@ -120,7 +120,7 @@ class PaymenReceiptMessage(GeneralMessage):
     def type(self):
         return self.tables[1].findAll('td')[-4].text
 
-class TransactionNotificationMessage(PaymenReceiptMessage):
+class TransactionNotificationMessage(PaymenReceiptMessage, MessageAbs):
 
     @property
     def subjects(self):
