@@ -58,12 +58,23 @@ class GmailService(EmailService):
         self.service = build('gmail', 'v1', credentials=self.credentials)
 
     def fetch_mail(self) -> list:
+        messages:list = list()
+
         self.construct_query()
         results = self.service.users().messages().list(userId='me',
                                                        q=self.query)
-        results = results.execute()
+        response = results.execute()
 
-        return results.get('messages', [])
+        messages.extend(response['messages'])
+
+        while 'nextPageToken' in response:
+            page_token = response['nextPageToken']
+            response = self.service.users().messages().list(userId='me',
+                                                            q=self.query,
+                                                            pageToken=page_token).execute()
+            messages.extend(response['messages'])
+
+        return messages
 
     def read_mail(self):
         for message in self.fetch_mail():
