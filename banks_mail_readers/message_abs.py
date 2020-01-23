@@ -21,6 +21,11 @@ class MessageAbs(ABC):
     def bank_email(cls):
         pass
 
+    @classmethod
+    @abstractmethod
+    def get_subjects(cls) -> list:
+        pass
+
     @abstractproperty
     def date(self) -> str:
         pass
@@ -42,7 +47,7 @@ class MessageAbs(ABC):
         pass
 
     @abstractproperty
-    def subjects(self) -> list:
+    def type(self) -> str:
         pass
 
     def get_element_by_class(self, element_tag: str,
