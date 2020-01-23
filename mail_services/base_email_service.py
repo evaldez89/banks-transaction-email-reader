@@ -62,10 +62,13 @@ class EmailService(ABC):
             message_template = message_class()
             message_template.feed(self.decode_message_body(message_body))
 
-            line = f"{message_template.date}|{message_template.currency}|"
-            line += f"{message_template.amount}|{message_template.merchant}|"
-            line += f"{message_template.status}|{message_template.type}\n"
+            try:
+                line = f"{message_template.date}|{message_template.currency}|"
+                line += f"{message_template.amount}|{message_template.merchant}|"
+                line += f"{message_template.status}|{message_template.type}\n"
 
-            return line
-        print(subject)
+                return line
+            except Exception:
+                print(f"Could not read message of bank {self.bank_name} with subject {subject}")
+
         return False
