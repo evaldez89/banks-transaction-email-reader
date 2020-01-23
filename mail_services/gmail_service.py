@@ -16,8 +16,8 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 
 
 class GmailService(EmailService):
-    def __init__(self, message_tempalte: MessageAbs, days_from: int):
-        super().__init__(message_tempalte, days_from)
+    def __init__(self, bank_name: str, days_from: int):
+        super().__init__(bank_name, days_from)
         self.name = 'Gmail Service'
 
     def _credentials_need_refresh(self):
@@ -26,23 +26,7 @@ class GmailService(EmailService):
             and self.credentials.refresh_token
 
     def construct_query(self):
-        self.query += f' from:{self.message_template.bank_email()} '
-
-        included_sbj = [x for x in self.message_template.subjects if x[0] != '-']
-        excluded_sbj = [x[1:] for x in self.message_template.subjects if x[0] == '-']
-
-        self.query += f"""subject:("{'" OR "'.join(
-            included_sbj
-        )}")"""
-
-        if excluded_sbj:
-            excluded = list()
-            for sbj in excluded_sbj:
-                excluded.append(f'-"{sbj}"')
-
-            self.query += f""" AND subject:({' OR '.join(
-                excluded
-            )})"""
+        self.query += f' from:internetbanking@vimenca.com '
 
     def authenticate(self):
         # The file token.pickle stores the user's access and refresh tokens,
@@ -84,12 +68,20 @@ class GmailService(EmailService):
     def read_mail(self):
         for message in self.fetch_mail():
             msg = self.service.users().messages().get(userId='me',
-                                                    id=message['id'],
-                                                    format='full').execute()
+                                                      id=message['id'],
+                                                      format='full').execute()
+
+            mail_headers = msg.get('payload').get('headers')
+            subject = [
+                x.get('value') for x in mail_headers
+                if x.get('name').lower() == 'subject'
+            ]
+
+            subject = subject[0] if len(subject) >= 1 else False
 
             date_format = "%A, %B %d, %Y %I:%M:%S"
             epoc_ms = int(msg['internalDate']) / 1000.0
-            date_time_obj = datetime.fromtimestamp(epoc_ms).strftime(date_format)
+            date_time_obj = datetime.fromtimestamp(epoc_ms)
 
             bodies = list()
             if msg['payload']['mimeType'] == 'multipart/related':
@@ -100,11 +92,8 @@ class GmailService(EmailService):
                 bodies.append(msg['payload']['body']['data'])
 
             for message_body in bodies:
-                self.message_template.feed(self.decode_message_body(message_body))
 
-                line = f"{self.message_template.date}|{self.message_template.currency}|"
-                line += f"{self.message_template.amount}|{self.message_template.merchant}|"
-                line += f"{self.message_template.status}|{self.message_template.type}\n"
-
-                with open('./test_files/transactions.csv', 'a+') as the_file:
-                    the_file.write(line)
+                detail_line = self.get_message_details(message_body, subject)
+                if detail_line:
+                    with open('./test_files/transactions.csv', 'a+') as the_file:
+                        the_file.write(f'{detail_line}')
