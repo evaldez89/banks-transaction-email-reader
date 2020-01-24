@@ -26,7 +26,8 @@ class GmailService(EmailService):
             and self.credentials.refresh_token
 
     def construct_query(self):
-        self.query += f' from:{self.bank_name} '
+        bank_email = self.message_templates[0].bank_email()
+        self.query += f' from:{bank_email} '
 
     def authenticate(self):
         # The file token.pickle stores the user's access and refresh tokens,
