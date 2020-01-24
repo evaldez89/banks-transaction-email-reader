@@ -10,14 +10,15 @@ from banks_mail_readers.message_factory import MessageFactory
 class EmailService(ABC):
 
     date_to = date.today() + timedelta(1)
-    messages_factory = MessageFactory()
 
     def __init__(self, bank_name: str, days_from: int):
         self.name = 'Base Service'
         self.bank_name = bank_name
         self.credentials = None
         self.service: Any = None
-        # self.message_template = message_template
+
+        messages_factory = MessageFactory()
+        self.message_templates = messages_factory.get_bank_messages(self.bank_name)
 
         # End date must be tomorrow in order to
         # To Ensure all messages (including today) al fetched
@@ -57,7 +58,8 @@ class EmailService(ABC):
         return urlsafe_b64decode(encoded_data)
 
     def get_message_details(self, message_body: str, subject: str):
-        message_class = EmailService.messages_factory.get_bank_message_template(self.bank_name, subject)
+        filtered_template = [cls for cls in self.message_templates if subject in cls.get_subjects()]
+        message_class = filtered_template[0] if filtered_template else None
         if message_class is not None:
             message_template = message_class()
             message_template.feed(self.decode_message_body(message_body))
