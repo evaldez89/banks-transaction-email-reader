@@ -26,7 +26,7 @@ class GmailService(EmailService):
             and self.credentials.refresh_token
 
     def construct_query(self):
-        self.query += f' from:internetbanking@vimenca.com '
+        self.query += f' from:{self.bank_name} '
 
     def authenticate(self):
         # The file token.pickle stores the user's access and refresh tokens,
@@ -36,7 +36,6 @@ class GmailService(EmailService):
 
         # TODO: donde se debe guardar correctamente?
         # credential_files = f'{tempfile.gettempdir()}/credentials.json'
-        print(os.getcwd())
         credential_files = 'credentials.json'
 
         if os.path.exists(token_file):
