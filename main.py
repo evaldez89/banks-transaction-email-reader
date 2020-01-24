@@ -9,15 +9,13 @@ SUBSCRIBED_BANKS = messages_factory.get_subscribed_banks()
 
 def main(**kwargs):
 
-    bank_arg = kwargs.get('bank')
+    bank_name = kwargs.get('bank')
     days_from = kwargs.get('days_from')
 
-    for message_class in messages_factory.get_bank_messages(bank_arg):
-        message_instance = message_class()
-        gmail = GmailService(message_instance, days_from)
-        gmail.authenticate()
-        gmail.build_service()
-        gmail.read_mail()
+    gmail = GmailService(bank_name, days_from)
+    gmail.authenticate()
+    gmail.build_service()
+    gmail.read_mail()
 
 
 if __name__ == '__main__':

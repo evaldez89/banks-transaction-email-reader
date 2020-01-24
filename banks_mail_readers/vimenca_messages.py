@@ -11,11 +11,12 @@ class GeneralMessage(MessageAbs):
     def bank_email(cls):
         return 'internetbanking@vimenca.com'
 
-    @property
-    def subjects(self):
+    @classmethod
+    def get_subjects(cls):
+        prefix = 'Banco Vimenca:'
         return [
-            'Notificación de Transacción',
-            'Aviso Retiro de efectivo'
+            f'{prefix} Notificación de Transacción',
+            f'{prefix} Aviso Retiro de efectivo'
         ]
 
     def feed(self, raw_html):
@@ -76,11 +77,10 @@ class PaymenReceiptMessage(GeneralMessage, MessageAbs):
         self.tables = list()
         super().__init__()
 
-    @property
-    def subjects(self):
+    @classmethod
+    def get_subjects(self):
         return [
-            'Comprobante de Pago',
-            '-Comprobante de pago beneficiario'
+            'Banco Vimenca: Comprobante de pago',
         ]
 
     def feed(self, raw_html):
@@ -122,10 +122,10 @@ class PaymenReceiptMessage(GeneralMessage, MessageAbs):
 
 class TransactionNotificationMessage(PaymenReceiptMessage, MessageAbs):
 
-    @property
-    def subjects(self):
+    @classmethod
+    def get_subjects(cls):
         return [
-            'Aviso Notificación Transacción ACH'
+            'Banco Vimenca: Aviso Notificación Transacción ACH'
         ]
 
     @property

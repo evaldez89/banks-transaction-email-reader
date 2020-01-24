@@ -12,8 +12,8 @@ class GeneralMessage(MessageAbs):
     def bank_email(cls):
         return 'alertas@bhdleon.com.do'
 
-    @property
-    def subjects(self):
+    @classmethod
+    def get_subjects(cls):
         return [
             'Alerta BHDLeón'
         ]
@@ -65,8 +65,8 @@ class PINPesoMessage(MessageAbs):
     def bank_email(cls):
         return 'alertas@bhdleon.com.do'
 
-    @property
-    def subjects(self):
+    @classmethod
+    def get_subjects(cls):
         return [
             'Notificacion de Retiro de PIN Pesos'
         ]

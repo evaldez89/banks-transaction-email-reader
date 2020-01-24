@@ -2,6 +2,7 @@ import importlib
 
 from . import bhdleon_messages, vimenca_messages
 from .message_abs import MessageAbs
+from typing import List, Optional, Type
 
 
 class MessageFactory():
@@ -18,7 +19,14 @@ class MessageFactory():
         super().__init__()
 
     @staticmethod
-    def get_bank_messages(bank_name) -> list:
+    def get_bank_message_template(bank_name: str, subject: str):
+        for class_reference in MessageFactory.get_bank_messages(bank_name):
+            if subject in class_reference.get_subjects():
+                return class_reference
+        return None
+
+    @staticmethod
+    def get_bank_messages(bank_name):
         messages_module_info = MessageFactory.__bank_messages_module_info(bank_name)
 
         messages_classess = list()
