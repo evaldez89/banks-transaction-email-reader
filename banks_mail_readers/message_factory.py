@@ -26,10 +26,10 @@ class MessageFactory():
         return None
 
     @staticmethod
-    def get_bank_messages(bank_name) -> List[MessageAbs]:
+    def get_bank_messages(bank_name):
         messages_module_info = MessageFactory.__bank_messages_module_info(bank_name)
 
-        messages_classess:List[MessageAbs] = list()
+        messages_classess = list()
 
         for message_info in messages_module_info:
             message_class = getattr(
