@@ -90,10 +90,6 @@ class GmailService(EmailService):
 
             subject = subject[0] if len(subject) >= 1 else False
 
-            date_format = "%A, %B %d, %Y %I:%M:%S"
-            epoc_ms = int(msg['internalDate']) / 1000.0
-            date_time_obj = datetime.fromtimestamp(epoc_ms)
-
             bodies = list()
             if msg['payload']['mimeType'] == 'multipart/related':
                 for body in msg['payload']['parts']:
