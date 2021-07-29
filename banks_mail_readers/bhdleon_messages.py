@@ -55,7 +55,7 @@ class PINPesoMessage(MessageAbs):
 
     def __init__(self):
         self.message_text = ''
-        return super().__init__()
+        super().__init__()
 
     @classmethod
     def bank_name(cls):
