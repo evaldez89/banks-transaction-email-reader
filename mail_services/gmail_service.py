@@ -1,9 +1,6 @@
 import os.path
 import pickle
 import tempfile
-from datetime import date, datetime, timedelta
-from base64 import urlsafe_b64decode
-import email
 
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
