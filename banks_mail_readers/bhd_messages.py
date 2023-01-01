@@ -6,16 +6,16 @@ class GeneralMessage(MessageAbs):
 
     @classmethod
     def bank_name(cls):
-        return 'bhdleon'
+        return 'bhd'
 
     @classmethod
     def bank_email(cls):
-        return 'alertas@bhdleon.com.do'
+        return 'alertas@bhd.com.do'
 
     @classmethod
     def get_subjects(cls):
         return [
-            'Alerta BHDLeón'
+            'BHD Notificación de Transacciones'
         ]
 
     @property
@@ -51,19 +51,11 @@ class GeneralMessage(MessageAbs):
         return self.get_element_by_class('td', 'class', 't_tipo').text
 
 
-class PINPesoMessage(MessageAbs):
+class PINPesoMessage(GeneralMessage):
 
     def __init__(self):
         self.message_text = ''
         super().__init__()
-
-    @classmethod
-    def bank_name(cls):
-        return 'bhdleon'
-
-    @classmethod
-    def bank_email(cls):
-        return 'alertas@bhdleon.com.do'
 
     @classmethod
     def get_subjects(cls):

@@ -61,6 +61,6 @@ Output Example:
     ```
   - Install requirements: `python -m pip install -r requirements.txt`
   - After having that, all you need is run:
-    - `python main.py bhdleon example@gmail.com`
+    - `python main.py bhd example@gmail.com`
 
 ## Make sure to checkout the [CONTRIBUTING.md](./CONTRIBUTING.md) guidelines.

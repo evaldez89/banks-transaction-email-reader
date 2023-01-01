@@ -1,6 +1,6 @@
 import importlib
 
-from . import bhdleon_messages, vimenca_messages
+from . import bhd_messages, vimenca_messages
 from .message_abs import MessageAbs
 from typing import List, Optional, Type
 

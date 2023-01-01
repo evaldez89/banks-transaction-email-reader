@@ -2,9 +2,9 @@
 
   ## Add a new Bank
 
-  - Guided by the current implementations (`./banks_mail_readers/bhdleon_messages.py`), there are some things to consider:
-      - The file with the code must be named with the prefix of the expected argument you want it to be called from main, conbine with `_messages`.
-        > Example: __bhdleon__ is `bhdleon_messages.py` and from the main the argument it is called with is `bhdleon`.
+  - Guided by the current implementations (`./banks_mail_readers/bhd_messages.py`), there are some things to consider:
+      - The file with the code must be named with the prefix of the expected argument you want it to be called from main, combined with `_messages`.
+        > Example: __bhd__ is `bhd_messages.py` and from the main the argument it is called with is `bhd`.
       - This class is to hold all the different messages identified by the subjects:
         > Example:
         ```python
@@ -28,7 +28,7 @@
                 '-Comprobante de pago beneficiario'
             ]
         ```
-      - Class property `subjects` contains all the subject to be read. In case you want to ignore a particular subject that migth be similiar in subject but different in body structure, you can append a `'-'` at the begining to ignore it (just for Gmail).
+      - Class property `subjects` contains all the subject to be read. In case you want to ignore a particular subject that might be similar in subject but different in body structure, you can append a `'-'` at the beginning to ignore it (just for Gmail).
         > Example:
           ```python
           @property
@@ -67,7 +67,7 @@
             merchant_name = merchant_name.text if merchant_name else 'None'
             return merchant_name
         ```
-    That is all, from `main.py` and base on the argument passed when running the file y will find all suscribed banks.
+    That is all, from `main.py` and base on the argument passed when running the file y will find all subscribed banks.
 
   ### Add a new Email Service
-  Currently only Gmail is supported. Stay tunned for intructions on how to add a new service.
+  Currently only Gmail is supported. Stay tunned for instructions on how to add a new service.

@@ -2,6 +2,8 @@ import os.path
 import pickle
 import tempfile
 from datetime import date, datetime, timedelta
+from base64 import urlsafe_b64decode
+import email
 
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -81,6 +83,23 @@ class GmailService(EmailService):
             msg = self.service.users().messages().get(userId='me',
                                                       id=message['id'],
                                                       format='full').execute()
+
+
+            # mime_msg = email.message_from_bytes(urlsafe_b64decode(msg.get("raw")))
+            # mime_msg = email.message_from_bytes(urlsafe_b64decode(msg.get("raw")))
+            # subject = mime_msg.get('subject')
+            # bodies = list()
+            # for part in mime_msg.get_payload():
+            #     bodies.extend(p.get_payload() for p in part.get_payload() if part.get_default_type() == "text/plain")
+            # message_main_type = mime_msg.get_content_maintype()
+            # if message_main_type == 'multipart':
+            #     for part in mime_msg.get_payload():
+            #         part_type = part.get_content_maintype()
+            #         part_msg = part.get_payload()
+            #         if part_type == 'text':
+            #             print(part.get_payload())
+            # elif message_main_type == 'text':
+            #     print(mime_msg.get_payload())
 
             mail_headers = msg.get('payload').get('headers')
             subject = [

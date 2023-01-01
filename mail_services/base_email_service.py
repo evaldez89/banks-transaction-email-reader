@@ -22,7 +22,7 @@ class EmailService(ABC):
 
         # End date must be tomorrow in order to
         # To Ensure all messages (including today) al fetched
-        self.date_from = self.date_to - timedelta(days_from)
+        self.date_from = self.date_to - timedelta(int(days_from))
 
         self.query = f'before:{self.date_to:%Y/%m/%d} ' \
                      f'after:{self.date_from:%Y/%m/%d}'
