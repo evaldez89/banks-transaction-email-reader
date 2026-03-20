@@ -6,18 +6,20 @@ from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
-from banks_mail_readers.message_abs import MessageAbs
-
 from .base_email_service import EmailService
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 
+# MIME types that may contain HTML message bodies directly or in their parts
+_MULTIPART_MIME_TYPES = {'multipart/related', 'multipart/alternative', 'multipart/mixed'}
+
 
 class GmailService(EmailService):
-    def __init__(self, bank_name: str, days_from: int):
+    def __init__(self, bank_name: str, days_from: int, output_path: str = None):
         super().__init__(bank_name, days_from)
         self.name = 'Gmail Service'
+        self.output_path = output_path or 'transactions.csv'
 
     def _credentials_need_refresh(self):
         return self.credentials \
@@ -57,23 +59,35 @@ class GmailService(EmailService):
         self.service = build('gmail', 'v1', credentials=self.credentials)
 
     def fetch_mail(self) -> list:
-        messages:list = list()
+        messages: list = list()
 
         self.construct_query()
-        results = self.service.users().messages().list(userId='me',
-                                                       q=self.query)
-        response = results.execute()
+        response = self.service.users().messages().list(userId='me',
+                                                        q=self.query).execute()
 
-        messages.extend(response['messages'])
+        messages.extend(response.get('messages', []))
 
         while 'nextPageToken' in response:
             page_token = response['nextPageToken']
             response = self.service.users().messages().list(userId='me',
                                                             q=self.query,
                                                             pageToken=page_token).execute()
-            messages.extend(response['messages'])
+            messages.extend(response.get('messages', []))
 
         return messages
+
+    def _extract_html_bodies(self, payload: dict) -> 'list[str]':
+        """Recursively extract all text/html body parts from a message payload."""
+        bodies = []
+        mime_type = payload.get('mimeType', '')
+        if mime_type == 'text/html':
+            data = payload.get('body', {}).get('data')
+            if data:
+                bodies.append(data)
+        elif mime_type in _MULTIPART_MIME_TYPES:
+            for part in payload.get('parts', []):
+                bodies.extend(self._extract_html_bodies(part))
+        return bodies
 
     def read_mail(self):
         for message in self.fetch_mail():
@@ -89,17 +103,11 @@ class GmailService(EmailService):
 
             subject = subject[0] if len(subject) >= 1 else False
 
-            bodies = list()
-            if msg['payload']['mimeType'] == 'multipart/related':
-                for body in msg['payload']['parts']:
-                    if body['mimeType'] == 'text/html':
-                        bodies.append(body['body']['data'])
-            elif msg['payload']['mimeType'] == 'text/html':
-                bodies.append(msg['payload']['body']['data'])
+            bodies = self._extract_html_bodies(msg.get('payload', {}))
 
             for message_body in bodies:
 
                 detail_line = self.get_message_details(message_body, subject)
                 if detail_line:
-                    with open('./test_files/transactions.csv', 'a+') as the_file:
+                    with open(self.output_path, 'a+') as the_file:
                         the_file.write(f'{detail_line}')
