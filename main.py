@@ -52,7 +52,7 @@ if __name__ == "__main__":
         "--days_from",
         help="Days to read from on the mail server",
         type=int,
-        default=366,
+        default=1,
     )
 
     arg_parser.add_argument(
