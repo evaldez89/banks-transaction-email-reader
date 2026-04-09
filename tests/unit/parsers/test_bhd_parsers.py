@@ -28,16 +28,16 @@ class TestBhdGeneralMessageParsing:
         self.parser.feed(load_fixture("bhd_general.html"))
 
     def test_date(self):
-        assert self.parser.date == "21/12/19 23:40"
+        assert self.parser.date == "06/04/2026 01:52 pm"
 
     def test_currency(self):
         assert self.parser.currency == "RD"
 
     def test_amount(self):
-        assert self.parser.amount == 91.12
+        assert self.parser.amount == 925.0
 
     def test_merchant(self):
-        assert self.parser.merchant == "UBR* PENDING.UBER.COM"
+        assert self.parser.merchant == "PedidosYa*Little Caesar"
 
     def test_status(self):
         assert self.parser.status == "Aprobada"
@@ -47,7 +47,7 @@ class TestBhdGeneralMessageParsing:
 
 
 class TestBhdGeneralMessageEdgeCases:
-    def test_missing_elements_return_empty_strings(self):
+    def test_no_table_trans_returns_empty_strings(self):
         parser = GeneralMessage()
         parser.feed("<html><body></body></html>")
         assert parser.date == ""
@@ -56,15 +56,21 @@ class TestBhdGeneralMessageEdgeCases:
         assert parser.status == ""
         assert parser.type == ""
 
-    def test_missing_amount_element_returns_zero(self):
+    def test_no_table_trans_returns_zero_amount(self):
         parser = GeneralMessage()
         parser.feed("<html><body></body></html>")
         assert parser.amount == 0
 
-    def test_invalid_amount_text_returns_zero(self):
+    def test_amount_with_dollar_sign_is_parsed(self):
         parser = GeneralMessage()
-        parser.feed('<html><body><td class="t_monto">N/A</td></body></html>')
-        assert parser.amount == 0
+        parser.feed(
+            '<html><body><table class="table_trans">'
+            "<tbody><tr>"
+            "<td>date</td><td>RD</td><td>$1,250.50</td>"
+            "<td>merchant</td><td>Aprobada</td><td>Compra</td>"
+            "</tr></tbody></table></body></html>"
+        )
+        assert parser.amount == pytest.approx(1250.50)
 
     def test_no_feed_defaults(self):
         parser = GeneralMessage()

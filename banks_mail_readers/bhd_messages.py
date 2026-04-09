@@ -4,6 +4,10 @@ from .bank_email_parser import BankEmailParser
 
 
 class GeneralMessage(BankEmailParser):
+    def __init__(self):
+        super().__init__()
+        self._cells: list = []
+
     @classmethod
     def bank_name(cls):
         return "bhd"
@@ -16,41 +20,44 @@ class GeneralMessage(BankEmailParser):
     def get_subjects(cls):
         return ["BHD Notificación de Transacciones"]
 
+    def feed(self, raw_html: str):
+        super().feed(raw_html)
+        table = self.get_element_by_class("table", "class", "table_trans")
+        rows = table.select("tbody tr") if table else []
+        self._cells = rows[0].find_all("td") if rows else []
+
+    def _cell(self, index: int) -> str:
+        if index < len(self._cells):
+            return self._cells[index].text.strip()
+        return ""
+
     @property
     def date(self):
-        element = self.get_element_by_class("td", "class", "t_fecha")
-        return element.text if element else ""
+        return self._cell(0)
 
     @property
     def currency(self):
-        element = self.get_element_by_class("td", "class", "t_moneda")
-        return element.text if element else ""
+        return self._cell(1)
 
     @property
     def amount(self):
-        value = 0
         try:
-            element = self.get_element_by_class("td", "class", "t_monto")
-            value = float(element.text) if element else 0
+            raw = self._cell(2).replace("$", "").replace(",", "").strip()
+            return float(raw)
         except ValueError:
-            pass
-        return value
+            return 0
 
     @property
     def merchant(self):
-        merchant_name = self.get_element_by_class("td", "class", "t_comercio")
-        merchant_name = merchant_name.text if merchant_name else ""
-        return merchant_name
+        return self._cell(3)
 
     @property
     def status(self):
-        element = self.get_element_by_class("td", "class", "t_estado")
-        return element.text if element else ""
+        return self._cell(4)
 
     @property
     def type(self):
-        element = self.get_element_by_class("td", "class", "t_tipo")
-        return element.text if element else ""
+        return self._cell(5)
 
 
 class PINPesoMessage(GeneralMessage):
@@ -65,9 +72,7 @@ class PINPesoMessage(GeneralMessage):
     def feed(self, raw_html: str):
         super().feed(raw_html)
         self.message_text = (
-            self.get_elements_by_tag("p")[0].text
-            if self.get_elements_by_tag("p")
-            else ""
+            self.get_elements_by_tag("p")[0].text if self.get_elements_by_tag("p") else ""
         )
 
     @property
