@@ -1,4 +1,4 @@
-from typing import Callable
+from collections.abc import Callable
 
 from domain.ports.email_provider import EmailProvider
 

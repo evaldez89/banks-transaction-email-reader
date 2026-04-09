@@ -1,11 +1,10 @@
-from typing import Optional
 
 from infrastructure.output.csv_writer import CsvTransactionWriter
 from infrastructure.output.json_writer import JsonTransactionWriter
 
 
 class TransactionWriter:
-    def __init__(self, output_format: str, output_path: Optional[str] = None):
+    def __init__(self, output_format: str, output_path: str | None = None):
         self.output_format = output_format
         self.output_path = output_path or (
             "transactions.json" if output_format == "json" else "transactions.csv"

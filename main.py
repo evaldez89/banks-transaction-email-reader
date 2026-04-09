@@ -10,7 +10,6 @@ SUBSCRIBED_BANKS = bank_parser_registry.get_subscribed_banks()
 
 
 def main(**kwargs):
-
     bank_name = kwargs.get("bank", "")
     email = kwargs.get("email", "me")
     days_from = kwargs.get("days_from", 1)
@@ -58,7 +57,7 @@ if __name__ == "__main__":
 
     arg_parser.add_argument(
         "--output",
-        help="Path to output file. Defaults depend on format: transactions.csv or transactions.json",
+        help="Path to output file. Defaults: transactions.csv or transactions.json",
         default=None,
     )
 
