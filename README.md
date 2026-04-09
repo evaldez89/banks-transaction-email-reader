@@ -1,66 +1,214 @@
 # Bank Transaction Email Reader
 
-The intention of this project is to read emails coming from a bank regarding information of a transaction.
+Reads transaction notification emails from bank accounts and exports them as structured data (CSV or JSON).
 
-The output right now is an csv file delimited by pipes ("|") but the goal is to return a json with all the information so you can be able to use this on your mobile, desktop or web applications.
+## Supported Banks
 
-Output Example:
+- Banco BHD León (Dominican Republic) ✅
+- Banco Vimenca (Dominican Republic) ✅
 
-    date|currency|amount|merchant|status|type|
-    21/12/19 23:40|RD|91.12|None|Reversada|Compra
-    21/12/19 23:40|RD|91.12|UBR* PENDING.UBER.COM|Aprobada|Compra
-    21/12/19 20:32|RD|125.53|UBR* PENDING.UBER.COM|Aprobada|Compra
+## Supported Email Providers
 
-# Task Legend
+- Gmail (Google API, read-only scope) ✅
 
-:construction: Work in progress
+## Architecture
 
-:white_check_mark: When task is done
+The project follows a clean architecture layered structure:
 
-:alarm_clock: Pending
+```
+domain/              # Pure business models and port contracts (no dependencies)
+  models/            #   Transaction, BankEmail, EmailSearchCriteria
+  ports/             #   EmailProvider, BankEmailParser, TransactionOutputPort
 
+infrastructure/      # Concrete implementations of domain ports
+  parsers/           #   Bank-specific HTML email parsers + BankParserRegistry
+    banks/
+      bhd/           #     BHD parser registration
+      vimenca/       #     Vimenca parser registration
+  email_providers/   #   EmailProviderRegistry
+  output/            #   CsvTransactionWriter, JsonTransactionWriter
 
-## The current supported banks are:
-  - Banco BHD León (Dominican Republic) :white_check_mark:
-  - Banco Vimenca (Dominican Republic) :construction:
+mail_services/       # Email provider implementations
+  gmail/             #   GmailEmailProvider + OAuth2 auth
 
-## Known Major Tasks TODO
+banks_mail_readers/  # Bank-specific email parser implementations
+```
 
-  1. When running the main file, one parameter should be the user email to determine which mail service to use
-  1. Right now it's only expecting multipart emails (threads) not single messages
-  1. How to handle email credentials?
-  1. How to handle email authentication token?
-  1. Add Outlook Email service
-  1. Add a new Email Service
-     1. Currently only Gmail is supported. Stay tunned for instructions on how to add a new service.
+Adding a new bank or email provider requires no changes to existing code — see the guides below.
 
-## The current supported email services are:
-  - Gmail: Using the Google api with readonly permission
+## Requirements
+
+- Python 3.12+
+- A Gmail API `credentials.json` file with read-only scope
+
+### Install runtime dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### Install development dependencies (tests + linting)
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+## Configuration
+
+Configure via environment variables:
+
+| Variable | Description | Default |
+|---|---|---|
+| `EMAIL_CREDENTIALS_FILE` | Path to Gmail OAuth2 credentials file | `credentials.json` |
+| `EMAIL_TOKEN_FILE` | Path to the generated OAuth2 token file | `token.json` |
+| `SUBJECT_MATCH_STRATEGY` | Subject matching strategy: `exact` or `regex` | `exact` |
 
 ## How to Execute
 
-  - Python versions that I can assure this work with:
-    >3.6.9
+```bash
+python main.py <bank> <email> [--days_from N] [--format csv|json] [--output PATH] [--domain DOMAIN]
+```
 
-  - You, as a developer, need a `credential.json` file provided by Gmail with the `readonly gmail api` activated. The file should be placed along side the `main.py` file. You can find instructions on how to get it from this [Quickstart Guide](https://developers.google.com/gmail/api/quickstart/python). It looks something like this:
-    ```json
-    {
-      "installed": {
-          "client_id": "the_cliente_id",
-          "project_id": "the_project_id",
-          "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-          "token_uri": "https://oauth2.googleapis.com/token",
-          "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-          "client_secret": "the_client_secret",
-          "redirect_uris": [
-              "urn:ietf:wg:oauth:2.0:oob",
-              "http://localhost"
-          ]
-      }
-    }
-    ```
-  - Install requirements: `python -m pip install -r requirements.txt`
-  - After having that, all you need is run:
-    - `python main.py bhd example@gmail.com`
+**Examples:**
 
-## Make sure to checkout the [CONTRIBUTING.md](./CONTRIBUTING.md) guidelines.
+```bash
+# Read BHD emails from the last 7 days, output as CSV (default)
+python main.py bhd me --days_from 7
+
+# Read Vimenca emails and export as JSON
+python main.py vimenca me --format json --output transactions.json
+
+# Specify a delegated Gmail account
+python main.py bhd delegate@company.com --days_from 30
+```
+
+**Arguments:**
+
+| Argument | Description | Default |
+|---|---|---|
+| `bank` | Bank code: `bhd` or `vimenca` | required |
+| `email` | Gmail account (`me` or delegated address) | required |
+| `--days_from` | Number of days to look back | `366` |
+| `--format` | Output format: `csv` or `json` | `csv` |
+| `--output` | Output file path | `transactions.csv` / `transactions.json` |
+| `--domain` | Email provider domain override (e.g. `gmail`) | derived from `email` |
+
+## Output
+
+### CSV
+
+```
+date,currency,amount,merchant,status,type,bank,source_subject
+21/12/19 23:40,RD,91.12,UBR* PENDING.UBER.COM,Aprobada,Compra,bhd,BHD Notificación de Transacciones
+```
+
+### JSON
+
+```json
+[
+  {
+    "date": "21/12/19 23:40",
+    "currency": "RD",
+    "amount": 91.12,
+    "merchant": "UBR* PENDING.UBER.COM",
+    "status": "Aprobada",
+    "type": "Compra",
+    "bank": "bhd",
+    "source_subject": "BHD Notificación de Transacciones"
+  }
+]
+```
+
+## Running Tests
+
+```bash
+pytest
+```
+
+Tests are organized as:
+
+```
+tests/
+  unit/
+    parsers/          # Parser tests per bank with HTML fixtures
+    test_bank_parser_registry.py
+  integration/
+    test_gmail_provider.py  # Gmail provider with mocked Google API
+```
+
+## Gmail Credentials Setup
+
+You need a `credentials.json` file from the Google Cloud Console with the Gmail read-only scope:
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Enable the Gmail API
+3. Create OAuth 2.0 credentials (Desktop app)
+4. Download the credentials file
+5. Set `EMAIL_CREDENTIALS_FILE` to its path, or place it as `credentials.json` in the project root
+
+On first run the app will open a browser window to complete OAuth2 authorization and save a `token.json` file for subsequent runs. See the [Gmail API Quickstart](https://developers.google.com/gmail/api/quickstart/python) for full details.
+
+## Adding a New Bank
+
+1. Create a parser class in `banks_mail_readers/` that extends `BankEmailParser`:
+
+   ```python
+   # banks_mail_readers/mybank_messages.py
+   from .bank_email_parser import BankEmailParser
+
+   class MyBankParser(BankEmailParser):
+       @classmethod
+       def bank_name(cls) -> str: return "mybank"
+
+       @classmethod
+       def bank_email(cls) -> str: return "alerts@mybank.com"
+
+       @classmethod
+       def get_subjects(cls) -> list[str]:
+           return ["MyBank: Transaction Notification"]
+
+       # implement date, currency, amount, merchant, status, type properties
+   ```
+
+2. Create a registration module at `infrastructure/parsers/banks/mybank/parsers.py`:
+
+   ```python
+   from banks_mail_readers.mybank_messages import MyBankParser
+   from infrastructure.parsers.registry import bank_parser_registry
+
+   bank_parser_registry.register("mybank", MyBankParser)
+   ```
+
+3. Add one import line to `infrastructure/parsers/banks/__init__.py`:
+
+   ```python
+   from infrastructure.parsers.banks.mybank import parsers as _mybank  # noqa: F401
+   ```
+
+That's all. No existing code needs to change.
+
+## Adding a New Email Provider
+
+1. Implement `EmailProvider[TRawMessage, TTransaction]` from `domain/ports/email_provider.py`.
+
+2. Create a folder under `mail_services/` and register the provider in its `__init__.py`:
+
+   ```python
+   # mail_services/myprovider/__init__.py
+   from infrastructure.email_providers.registry import email_provider_registry
+   from .myprovider_email_provider import MyEmailProvider
+
+   email_provider_registry.register("myprovider", MyEmailProvider)
+   ```
+
+3. Add one import line to `mail_services/__init__.py`:
+
+   ```python
+   from mail_services import myprovider  # noqa: F401
+   ```
+
+The provider key is matched against the domain extracted from the `email` argument (or the `--domain` flag).
+
+## Contributing
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md).
