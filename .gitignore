@@ -2,7 +2,7 @@
 venv
 credential*
 token*
-*/__pycache__
+**/__pycache__
 /__pycache__
 .python-version
 /test_files
