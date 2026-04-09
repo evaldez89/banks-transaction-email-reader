@@ -71,14 +71,14 @@ class GeneralMessage(MessageAbs):
         return self.get_field_value_by_header('Tipo de Transacción').strip()
 
 
-class PaymenReceiptMessage(GeneralMessage, MessageAbs):
+class PaymentReceiptMessage(GeneralMessage, MessageAbs):
 
     def __init__(self):
         self.tables = list()
         super().__init__()
 
     @classmethod
-    def get_subjects(self):
+    def get_subjects(cls):
         return [
             'Banco Vimenca: Comprobante de pago',
         ]
@@ -120,7 +120,7 @@ class PaymenReceiptMessage(GeneralMessage, MessageAbs):
     def type(self):
         return self.tables[1].findAll('td')[-4].text
 
-class TransactionNotificationMessage(PaymenReceiptMessage, MessageAbs):
+class TransactionNotificationMessage(PaymentReceiptMessage, MessageAbs):
 
     @classmethod
     def get_subjects(cls):

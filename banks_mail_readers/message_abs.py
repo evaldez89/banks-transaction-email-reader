@@ -1,5 +1,4 @@
-from abc import ABC, abstractmethod, abstractproperty
-from datetime import date, datetime, timedelta
+from abc import ABC, abstractmethod
 
 from bs4 import BeautifulSoup, Tag
 
@@ -26,27 +25,33 @@ class MessageAbs(ABC):
     def get_subjects(cls) -> list:
         pass
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def date(self) -> str:
         pass
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def currency(self) -> str:
         pass
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def amount(self) -> float:
         pass
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def merchant(self) -> str:
         pass
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def status(self) -> str:
         pass
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def type(self) -> str:
         pass
 

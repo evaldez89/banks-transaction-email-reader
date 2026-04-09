@@ -9,8 +9,6 @@ from banks_mail_readers.message_factory import MessageFactory
 
 class EmailService(ABC):
 
-    date_to = date.today() + timedelta(1)
-
     def __init__(self, bank_name: str, days_from: int):
         self.name = 'Base Service'
         self.bank_name = bank_name
@@ -22,9 +20,10 @@ class EmailService(ABC):
 
         # End date must be tomorrow in order to
         # To Ensure all messages (including today) al fetched
-        self.date_from = self.date_to - timedelta(int(days_from))
+        date_to = date.today() + timedelta(1)
+        self.date_from = date_to - timedelta(int(days_from))
 
-        self.query = f'before:{self.date_to:%Y/%m/%d} ' \
+        self.query = f'before:{date_to:%Y/%m/%d} ' \
                      f'after:{self.date_from:%Y/%m/%d}'
 
     def construct_query(self):
