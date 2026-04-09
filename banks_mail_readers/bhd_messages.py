@@ -1,104 +1,108 @@
-from .message_abs import MessageAbs
 import re
 
+from .bank_email_parser import BankEmailParser
 
-class GeneralMessage(MessageAbs):
 
+class GeneralMessage(BankEmailParser):
     @classmethod
     def bank_name(cls):
-        return 'bhd'
+        return "bhd"
 
     @classmethod
     def bank_email(cls):
-        return 'alertas@bhd.com.do'
+        return "alertas@bhd.com.do"
 
     @classmethod
     def get_subjects(cls):
-        return [
-            'BHD Notificación de Transacciones'
-        ]
+        return ["BHD Notificación de Transacciones"]
 
     @property
     def date(self):
-        return self.get_element_by_class('td', 'class', 't_fecha').text
+        element = self.get_element_by_class("td", "class", "t_fecha")
+        return element.text if element else ""
 
     @property
     def currency(self):
-        return self.get_element_by_class('td', 'class', 't_moneda').text
+        element = self.get_element_by_class("td", "class", "t_moneda")
+        return element.text if element else ""
 
     @property
     def amount(self):
         value = 0
         try:
-            value = self.get_element_by_class('td', 'class', 't_monto').text
-            value = float(value)
+            element = self.get_element_by_class("td", "class", "t_monto")
+            value = float(element.text) if element else 0
         except ValueError:
             pass
         return value
 
     @property
     def merchant(self):
-        merchant_name = self.get_element_by_class('td', 'class', 't_comercio')
-        merchant_name = merchant_name.text if merchant_name else 'None'
+        merchant_name = self.get_element_by_class("td", "class", "t_comercio")
+        merchant_name = merchant_name.text if merchant_name else ""
         return merchant_name
 
     @property
     def status(self):
-        return self.get_element_by_class('td', 'class', 't_estado').text
+        element = self.get_element_by_class("td", "class", "t_estado")
+        return element.text if element else ""
 
     @property
     def type(self):
-        return self.get_element_by_class('td', 'class', 't_tipo').text
+        element = self.get_element_by_class("td", "class", "t_tipo")
+        return element.text if element else ""
 
 
 class PINPesoMessage(GeneralMessage):
-
     def __init__(self):
-        self.message_text = ''
+        self.message_text = ""
         super().__init__()
 
     @classmethod
     def get_subjects(cls):
-        return [
-            'Notificacion de Retiro de PIN Pesos'
-        ]
+        return ["Notificacion de Retiro de PIN Pesos"]
 
     def feed(self, raw_html: str):
         super().feed(raw_html)
-        self.message_text = self.get_elements_by_tag('p')[0].text if self.get_elements_by_tag('p') else ''
+        self.message_text = (
+            self.get_elements_by_tag("p")[0].text
+            if self.get_elements_by_tag("p")
+            else ""
+        )
 
     @property
     def date(self):
-        date_value = re.findall(r'\d{2}/\d{2}/\d{4}', self.message_text)
-        date_value = date_value[0] if date_value else 'None'
+        date_value = re.findall(r"\d{2}/\d{2}/\d{4}", self.message_text)
+        date_value = date_value[0] if date_value else ""
         return date_value
 
     @property
     def currency(self):
-        return 'RD'
+        return "RD"
 
     @property
-    def amount(self):
-        value = 0
+    def amount(self) -> float:
         try:
-            value = re.findall(r'\$\d+,?\d+', self.message_text)
-            value = float(value[0][1:].replace(',', ''))
+            value = re.findall(r"\$\d+,?\d+", self.message_text)
+            return float(value[0][1:].replace(",", "")) if value else 0.0
         except ValueError:
             pass
-        return value
+        return 0.0
 
     @property
     def merchant(self):
-        number = re.findall(r'(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[-\.\s]??\d{4})', self.message_text)
-        merchant_name = number[0] if number else 'None'
-        merchant_name = f'PIN Pesos - {merchant_name}'
+        number = re.findall(
+            r"(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[-\.\s]??\d{4})",
+            self.message_text,
+        )
+        merchant_name = number[0] if number else ""
+        merchant_name = f"PIN Pesos - {merchant_name}"
         return merchant_name
 
     @property
     def status(self):
-        return 'Aprobada'
+        return "Aprobada"
 
     @property
     def type(self):
-        return 'Retiro de Efectivo'
-
+        return "Retiro de Efectivo"
